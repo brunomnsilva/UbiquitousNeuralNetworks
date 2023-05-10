@@ -58,17 +58,22 @@ Contains different types of visualizations for all available models and a simple
 
 ### Installation
 
-:construction: Library to be made available through Maven Central.
+The library is available through Maven Central. The coordinates are:
 
+```xml
+<dependency>
+  <groupId>com.brunomnsilva</groupId>
+  <artifactId>neuralnetworks</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
 ### Usage
 
-:construction: Until the *Wiki* pages are created with examples, you can check some examples in the `com.brunomnsilva.ubiquitousneuralnets.examples` source folder.
-
-
+:construction: Until the *Wiki* pages are created with examples, you can check some usage examples in the `neuralnetworks-examples` folder.
 
 ### API Reference
 
-:construction: API reference to be made available through <https://javadoc.io/>, after Maven Central artifact.
+[![javadoc](https://javadoc.io/badge2/com.brunomnsilva/neuralnetworks/javadoc.svg)](https://javadoc.io/doc/com.brunomnsilva/neuralnetworks)
 
 ## Examples
 
