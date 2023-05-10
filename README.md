@@ -67,13 +67,25 @@ The library is available through Maven Central. The coordinates are:
   <version>1.0.0</version>
 </dependency>
 ```
-### Usage and examples
 
-:construction: Until the *Wiki* pages are created with examples, you can check some usage examples in the `neuralnetworks-examples` folder.
+Some *transient* dependencies are used, namely:
+
+- [snakeyaml](https://mvnrepository.com/artifact/org.yaml/snakeyaml)
+- [colt](https://mvnrepository.com/artifact/colt/colt)
+- [commons-math3](https://mvnrepository.com/artifact/org.apache.commons/commons-math3)
+- [jcommon](https://mvnrepository.com/artifact/org.jfree/jcommon)
+- [jfreechart](https://mvnrepository.com/artifact/org.jfree/jfreechart)
+- [jfreesvg](https://mvnrepository.com/artifact/org.jfree/jfreesvg)
+- [JMathPlot](https://mvnrepository.com/artifact/com.github.yannrichet/JMathPlot)
 
 ### API Reference
 
 [![javadoc](https://javadoc.io/badge2/com.brunomnsilva/neuralnetworks/javadoc.svg)](https://javadoc.io/doc/com.brunomnsilva/neuralnetworks)
+
+
+### Usage and examples
+
+:construction: Until the *Wiki* pages are created with examples, you can check some usage examples in the `neuralnetworks-examples` folder.
 
 ## Contributing
 
