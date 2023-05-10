@@ -67,17 +67,13 @@ The library is available through Maven Central. The coordinates are:
   <version>1.0.0</version>
 </dependency>
 ```
-### Usage
+### Usage and examples
 
 :construction: Until the *Wiki* pages are created with examples, you can check some usage examples in the `neuralnetworks-examples` folder.
 
 ### API Reference
 
 [![javadoc](https://javadoc.io/badge2/com.brunomnsilva/neuralnetworks/javadoc.svg)](https://javadoc.io/doc/com.brunomnsilva/neuralnetworks)
-
-## Examples
-
-You can check the `examples` source folder and the Wiki.
 
 ## Contributing
 
