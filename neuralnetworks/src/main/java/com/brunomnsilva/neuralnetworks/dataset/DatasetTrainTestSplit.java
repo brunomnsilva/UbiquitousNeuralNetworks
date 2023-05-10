@@ -25,7 +25,7 @@
 package com.brunomnsilva.neuralnetworks.dataset;
 
 /**
- * Performs a train/test split for a given dataset through {@link this#split(Dataset, double)}.
+ * Performs a train/test split for a given dataset through {@link #split(Dataset, double)}.
  *
  * @author brunomnsilva
  */

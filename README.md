@@ -50,7 +50,7 @@ Contains different types of visualizations for all available models and a simple
 
 ![](assets/streamart2a-visualizations-example.png)
 
-#### MLP Netorks
+#### MLP Networks
 
 ![](assets/mlp-visualizations-example.png)
 

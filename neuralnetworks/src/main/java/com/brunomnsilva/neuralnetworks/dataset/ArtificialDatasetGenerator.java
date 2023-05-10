@@ -46,6 +46,12 @@ import static java.lang.StrictMath.*;
 
 public class ArtificialDatasetGenerator {
 
+    /**
+     * Generates an artificial uniform distribution in 2d-space.
+     * @param outputFilename the resulting filename
+     * @param N number of data points to generate
+     * @throws IOException if file cannot be created
+     */
     public static void uniform(String outputFilename, int N) throws IOException {
 
         Locale.setDefault(Locale.US); //'.' as decimal separator
@@ -76,6 +82,14 @@ public class ArtificialDatasetGenerator {
         fw.close();
     }
 
+    /**
+     * Generates an artificial gaussian distribution in 2d-space.
+     * @param outputFilename the resulting filename
+     * @param N number of data points to generate
+     * @param mean mean of the distribution
+     * @param variance variance of the distribution
+     * @throws IOException if file cannot be created
+     */
     public static void gaussian(String outputFilename, int N, double mean, double variance) throws IOException {
 
         Locale.setDefault(Locale.US); //'.' as decimal separator
@@ -108,6 +122,13 @@ public class ArtificialDatasetGenerator {
         fw.close();
     }
 
+    /**
+     * Generates an artificial distribution in 3d-space representing a sphere.
+     * @param outputFilename the resulting filename
+     * @param N number of data points to generate
+     * @param radius radius of the sphere
+     * @throws IOException if file cannot be created
+     */
     public static void sphere(String outputFilename, int N, double radius) throws IOException {
 
         Locale.setDefault(Locale.US); //'.' as decimal separator
@@ -152,18 +173,18 @@ public class ArtificialDatasetGenerator {
     }
 
     /**
-     *
-     *
+     * Creates a data set from an input colored (file) image.
+     * <br/>
      * Please note that the background color of the image must be (pure) white, i.e., (255,255,255).
      * Otherwise, it will be considered as a cluster color.
      * <br/>
      * This algorithm will ensure that N data points are generated. There is no guarantee that the point
      * density of each cluster will be the same. It is a stochastic algorithm.
      *
-     * @param outputFilename
-     * @param N
-     * @param inputFilename
-     * @param minMaxScaling
+     * @param outputFilename the resulting filename
+     * @param N number of data points to generate
+     * @param inputFilename filepath of input image
+     * @param minMaxScaling whether data points are normalized into <code>[0,1]</code>
      * @throws IOException
      */
     public static void fromColorImageStochastic(String outputFilename, int N, String inputFilename, boolean minMaxScaling) throws IOException {
@@ -259,6 +280,20 @@ public class ArtificialDatasetGenerator {
         fw.close();
     }
 
+    /**
+     * Creates a data set from an input colored (file) image.
+     * <br/>
+     * Please note that the background color of the image must be (pure) white, i.e., (255,255,255).
+     * Otherwise, it will be considered as a cluster color.
+     * <br/>
+     * This algorithm will not ensure that N data points are generated. The point density will be
+     * proportional to the size of the clusters in the image.
+     *
+     * @param outputFilename the resulting filename
+     * @param N number of data points to generate
+     * @param inputFilename filepath of input image
+     * @throws IOException
+     */
     public static void fromColorImageWithRelativeDensity(String outputFilename, int N, String inputFilename) throws IOException {
         // This algorithm will ensure that at least N data points are generated. There is no guarantee that the point
         // density of each cluster will be the same. It is a stochastic algorithm.
@@ -367,14 +402,20 @@ public class ArtificialDatasetGenerator {
         fw.close();
     }
 
-
-
-    public static String getCurrentDate() {
+    /**
+     * Returns the current system date in the format <code>"yyyy/MM/dd"</code>.
+     * @return
+     */
+    private static String getCurrentDate() {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
         return currentDate.format(formatter);
     }
 
+    /**
+     * Example usage of artificial generators.
+     * @param args (none)
+     */
     public static void main(String[] args) {
         try {
             //uniform("datasets/uniform2d.data", 100000);

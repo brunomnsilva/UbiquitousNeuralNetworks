@@ -34,6 +34,10 @@ import java.awt.*;
  */
 public class MessagePanel extends JPanel {
 
+    /**
+     * Default constructor.
+     * @param message the message to be displayed
+     */
     public MessagePanel(String message) {
 
         setPreferredSize(new Dimension(400,500));

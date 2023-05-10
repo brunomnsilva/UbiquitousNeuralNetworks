@@ -47,6 +47,7 @@ public abstract class NeuronLayer {
     /**
      * Checks to see if the neuron can be added to this layer.
      * Must be of the same type of the layer.
+     * @param neuron the neuron to check
      */
     public abstract boolean isValidNeuron(Neuron neuron);
 

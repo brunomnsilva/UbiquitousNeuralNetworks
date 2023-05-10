@@ -103,9 +103,9 @@ public class GenericGridPanel extends JPanel {
      * <br/>
      * Note that changes made by calling this method will only be reflected in the visualization after calling
      * the {@link #update()} method.
+     * @param value the value to assign to the cell
      * @param xIndex the x-index of grid cell. Must be valid, i.e., in [0, gridWidth - 1].
      * @param yIndex the y-index of grid cell. Must be valid, i.e., in [0, gridHeight - 1].
-     * @param yIndex
      */
     public void set(double value, int xIndex, int yIndex) {
         Args.requireFinite(value, "value");

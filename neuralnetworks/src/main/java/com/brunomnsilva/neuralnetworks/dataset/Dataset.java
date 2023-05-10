@@ -37,10 +37,10 @@ import java.util.*;
  * the details of the dataset, see {@link YamlDatasetHeader}.
  *
  * This dataset is {@link Iterable} over {@link DatasetItem} elements. Different traversals
- * can be obtained by shuffling the dataset, see {@link this#shuffle()} and {@link this#shuffle(int)}.
+ * can be obtained by shuffling the dataset, see {@link this#shuffle()} and {@link #shuffle(int)}.
  *
  * A dataset will not allow adding or removing of items, once it is loaded. We can, however,
- * obtain only "parts" of the dataset through, e.g., {@link this#crop(int, int)}.
+ * obtain only "parts" of the dataset through, e.g., {@link #crop(int, int)}.
  *
  * @see YamlDatasetHeader
  * @see DatasetItem
@@ -217,7 +217,7 @@ public class Dataset implements Iterable<DatasetItem> {
 
     /**
      * Obtains the <b>reference</b> of the {@link DatasetItem} at <code>index</code>.
-     * @param index the internal index of the item, in [0, {@link this#size()} - 1].
+     * @param index the internal index of the item, in [0, {@link #size()} - 1].
      * @return the dataset item.
      * @throws IndexOutOfBoundsException if the index is not valid.
      */
@@ -232,7 +232,7 @@ public class Dataset implements Iterable<DatasetItem> {
     /**
      * Shuffles the data set items using the default random generator.
      * <br/>
-     * After this operation {@link this#iterator()} will follow a new ordering.
+     * After this operation {@link #iterator()} will follow a new ordering.
      */
     public void shuffle() {
         Collections.shuffle(items);
@@ -241,7 +241,7 @@ public class Dataset implements Iterable<DatasetItem> {
     /**
      * Shuffles the data set items using java random generator with specified seed.
      * <br/>
-     * After this operation {@link this#iterator()} will follow a new ordering.
+     * After this operation {@link #iterator()} will follow a new ordering.
      * @param seed a seed number to initialize random generator
      */
     public void shuffle(int seed) {

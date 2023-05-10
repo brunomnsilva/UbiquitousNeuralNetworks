@@ -42,9 +42,17 @@ import java.util.List;
  */
 public class DBSCANClustering extends SelfOrganizingMapClustering {
 
+    /** Epsilon parameter. */
     private final double eps;
+    /** minPoints parameter. */
     private final int minPts;
 
+    /**
+     * Creates a new instance of DBSCANClustering.
+     * @param som the SelfOrganizingMap to cluster its prototypes.
+     * @param eps the value of the <i>epsilon</i> parameter
+     * @param minPts the value of the <i>minPoints</i> parameter
+     */
     public DBSCANClustering(SelfOrganizingMap som, double eps, int minPts) {
         super(som);
         this.eps = eps;

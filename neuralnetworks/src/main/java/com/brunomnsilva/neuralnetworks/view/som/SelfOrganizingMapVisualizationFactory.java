@@ -178,8 +178,8 @@ public class SelfOrganizingMapVisualizationFactory {
     /**
      * Creates a new instance of AbstractSpatialVisualizationPanel. The best available implementation is automatically
      * chosen, i.e., {@link SpatialVisualization2DPanel} or {@link SpatialVisualization3DPanel}.
-     * @see {@link SpatialVisualization2DPanel}
-     * @see {@link SpatialVisualization3DPanel}
+     * @see SpatialVisualization2DPanel
+     * @see SpatialVisualization3DPanel
      * @param som the SelfOrganizingMap to visualize
      * @param dataset the Dataset with input data to visualize
      * @return a new instance of the visualization
@@ -200,8 +200,8 @@ public class SelfOrganizingMapVisualizationFactory {
      * <br/>
      * These variants of this visualization are made to stream input data into them, if necessary, via
      * {@link AbstractSpatialVisualizationPanel#streamDatasetItem(DatasetItem)}.
-     * @see {@link SpatialVisualization2DPanel}
-     * @see {@link SpatialVisualization3DPanel}
+     * @see SpatialVisualization2DPanel
+     * @see SpatialVisualization3DPanel
      * @param som the SelfOrganizingMap to visualize
      * @return a new instance of the visualization
      */

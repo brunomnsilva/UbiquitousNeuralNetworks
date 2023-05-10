@@ -38,7 +38,10 @@ import com.brunomnsilva.neuralnetworks.models.som.PrototypeNeuron;
  */
 public class DSOM extends StreamingSOM {
 
+    /** The Plasticity parameter. */
     private final double plasticity;
+
+    /** The Epsilon parameter. */
     private final double epsilon;
 
     public DSOM(int width, int height, int dimensionality, double plasticity, double epsilon) {

@@ -31,6 +31,9 @@ package com.brunomnsilva.neuralnetworks.view.colorscale;
  */
 public class ColorScaleParula extends ColorScaleFromLevels {
 
+    /**
+     * Default constructor.
+     */
     public ColorScaleParula() {
         super(new int[][]{
                 {53, 42, 135},

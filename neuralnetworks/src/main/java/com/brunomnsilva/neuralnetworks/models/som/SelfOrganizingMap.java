@@ -167,7 +167,7 @@ public abstract class SelfOrganizingMap extends AbstractObservable
 
     /**
      * Computes the Best Matching Unit (BMU) for an <code>input</code>.
-     * This is the prototype neuron that is closest to the <>input</>
+     * This is the prototype neuron that is closest to the <i>input</i>
      * according to the current <i>distance metric</i>.
      * @param input the input
      * @return the BMU for the input
@@ -210,6 +210,10 @@ public abstract class SelfOrganizingMap extends AbstractObservable
         return dimensionality;
     }
 
+    /**
+     * Returns a name describing this implementation/variant of the SelfOrganizingMap.
+     * @return a name describing this implementation/variant of the SelfOrganizingMap
+     */
     public abstract String getImplementationName();
 
     @Override

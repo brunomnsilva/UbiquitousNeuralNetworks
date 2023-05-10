@@ -42,15 +42,13 @@ import java.text.DecimalFormat;
 /**
  * Utility class to generate 2D plots, using JFreeChart plots.
  *
- * @implNote Known problem: sometimes, specially with windowed-sized plots, java.lang.IndexOutOfBoundsException exceptions
+ * Known problem: sometimes, specially with windowed-sized plots, java.lang.IndexOutOfBoundsException exceptions
  *            are randomly thrown; these are recoverable. I have yet to resolve the issue, but I believe the underlying
  *            implementation (JFreeChart) isn't robust enough to handle a high cadence of adding points to a series,
  *            while having to update the plots.
  *
  *            I think I would have to override the Renderer and use a lock to synchronize the operations of adding points
  *            and repainting.
- *
- *            We can check this with {@link com.brunomnsilva.neuralnetworks.examples.som.InteractiveGaussianClouds} example.
  *
  * @author brunomnsilva
  */

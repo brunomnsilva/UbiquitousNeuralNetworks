@@ -43,6 +43,10 @@ public class CodebookVisualizationLayer implements LayerVisualization {
 
     private StreamART2A streamART;
 
+    /**
+     * Default constructor.
+     * @param streamART the StreamART2A instance to visualize
+     */
     public CodebookVisualizationLayer(StreamART2A streamART) {
         Args.nullNotPermitted(streamART, "streamART");
 

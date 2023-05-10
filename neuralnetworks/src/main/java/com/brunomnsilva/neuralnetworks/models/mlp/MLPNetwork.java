@@ -251,6 +251,11 @@ public class MLPNetwork {
         return new ArrayList<>(hiddenLayers);
     }
 
+    /**
+     * Returns a dictionary with mappings <code>{neuron : outgoing synapses}</code>.
+     *
+     * @return a dictionary with mappings <code>{neuron : outgoing synapses}</code>
+     */
     public HashMap<Neuron, Synapse[]> getSynapsesFrom() {
         HashMap<Neuron, Synapse[]> synapsesFrom = new HashMap<>();
 

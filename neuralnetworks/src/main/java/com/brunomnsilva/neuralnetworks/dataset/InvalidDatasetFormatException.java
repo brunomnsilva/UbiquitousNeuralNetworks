@@ -32,6 +32,11 @@ package com.brunomnsilva.neuralnetworks.dataset;
  * @author brunomnsilva
  */
 public class InvalidDatasetFormatException extends Exception {
+
+    /**
+     * Default constructor.
+     * @param message the exception message
+     */
     public InvalidDatasetFormatException(String message) {
         super(message);
     }

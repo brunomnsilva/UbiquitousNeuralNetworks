@@ -27,12 +27,18 @@ package com.brunomnsilva.neuralnetworks.dataset;
 import com.brunomnsilva.neuralnetworks.core.VectorN;
 
 /**
- *  * A mean-centered dataset normalization implementation.
+ * A mean-centered dataset normalization implementation.
+ *
+ * @author brunomnsilva
  */
 public class MeanNormalization extends DatasetNormalization {
 
     private VectorN meanInput, meanOutput;
 
+    /**
+     * Creates a new instance of MeanNormalization.
+     * @param dataset the Dataset to compute normalization information from
+     */
     public MeanNormalization(Dataset dataset) {
         // No need to hold the reference after the constructor
         meanInput = VectorN.zeros( dataset.inputDimensionality() );

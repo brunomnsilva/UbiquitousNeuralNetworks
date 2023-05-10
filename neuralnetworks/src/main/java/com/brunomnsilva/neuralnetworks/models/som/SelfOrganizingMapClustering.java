@@ -31,15 +31,29 @@ package com.brunomnsilva.neuralnetworks.models.som;
  */
 public abstract class SelfOrganizingMapClustering {
 
+    /** The instance of SelfOrganizingMap to be clustered. */
     private SelfOrganizingMap som;
 
+    /**
+     * Creates a new instance of a SelfOrganizingMapClustering.
+     * @param som the instance of SelfOrganizingMap to be clustered
+     */
     public SelfOrganizingMapClustering(SelfOrganizingMap som) {
         this.som = som;
     }
 
+    /**
+     * Returns the instance of SelfOrganizingMap to be clustered.
+     * @return the instance of SelfOrganizingMap to be clustered
+     */
     public SelfOrganizingMap getSelfOrganizingMap() {
         return som;
     }
 
+    /**
+     * Returns the SelfOrganizingMapClusteringResult.
+     * @see SelfOrganizingMapClusteringResult
+     * @return the SelfOrganizingMapClusteringResult
+     */
     public abstract SelfOrganizingMapClusteringResult cluster();
 }

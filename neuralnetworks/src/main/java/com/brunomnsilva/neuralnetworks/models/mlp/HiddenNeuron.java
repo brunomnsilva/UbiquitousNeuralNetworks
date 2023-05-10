@@ -30,6 +30,7 @@
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
 /**
+ * A subtype of Neuron for hidden layers.
  *
  * @author brunomnsilva
  */

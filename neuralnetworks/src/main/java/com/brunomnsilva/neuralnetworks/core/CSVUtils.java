@@ -27,12 +27,31 @@ package com.brunomnsilva.neuralnetworks.core;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Utility class for reading and writing CSV files.
+ *
+ * @author brunomnsilva
+ */
 public final class CSVUtils {
+
+    /**
+     * Appends a sequence of <i>double</i> values to a CSV file, using the default (comma) value separator.
+     * @param fw the file to write
+     * @param values the sequence of values
+     * @throws IOException if the file cannot be written to
+     */
     public static void appendValuesToFile(FileWriter fw, double ...values) throws IOException {
         // By default values are comma-separated
         appendValuesToFile(fw, ',', values);
     }
 
+    /**
+     * Appends a sequence of <i>double</i> values to a CSV file, using the specified value separator.
+     * @param fw the file to write
+     * @param separator the value separator to use
+     * @param values the sequence of values
+     * @throws IOException if the file cannot be written to
+     */
     public static void appendValuesToFile(FileWriter fw, char separator, double ...values) throws IOException {
         StringBuilder sb = new StringBuilder();
         for(int i=0; i < values.length; ++i) {
@@ -45,11 +64,24 @@ public final class CSVUtils {
         fw.write(sb.toString());
     }
 
+    /**
+     * Appends a sequence of <i>String</i> values to a CSV file, using the default (comma) value separator.
+     * @param fw the file to write
+     * @param values the sequence of values
+     * @throws IOException if the file cannot be written to
+     */
     public static void appendValuesToFile(FileWriter fw, String ...values) throws IOException {
         // By default values are comma-separated
         appendValuesToFile(fw, ',', values);
     }
 
+    /**
+     * Appends a sequence of <i>String</i> values to a CSV file, using the default (comma) value separator.
+     * @param fw the file to write
+     * @param separator the value separator to use
+     * @param values the sequence of values
+     * @throws IOException if the file cannot be written to
+     */
     public static void appendValuesToFile(FileWriter fw, char separator, String ...values) throws IOException {
         StringBuilder sb = new StringBuilder();
         for(int i=0; i < values.length; ++i) {

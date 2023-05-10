@@ -36,6 +36,9 @@ public abstract class ColorScaleComputed implements ColorScale {
 
     private final BufferedImage image;
 
+    /**
+     * Default constructor.
+     */
     public ColorScaleComputed() {
         this.image = imageFromScale(this, 1, 255);
     }

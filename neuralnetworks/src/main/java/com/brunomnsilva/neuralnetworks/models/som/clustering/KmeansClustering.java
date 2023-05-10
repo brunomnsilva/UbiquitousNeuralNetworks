@@ -40,9 +40,18 @@ import java.util.List;
  */
 public class KmeansClustering extends SelfOrganizingMapClustering {
 
+    /** The number of clusters of interest. */
     private final int numberClusters;
+
+    /** Maximum number of iterations of the algorithm. */
     private final int maxIterations;
 
+    /**
+     * Creates a new instance of KmeansClustering.
+     * @param som the SelfOrganizingMap to cluster its prototypes.
+     * @param numberClusters the number of clusters of interest
+     * @param maxIterations the maximum number of iterations of the algorithm
+     */
     public KmeansClustering(SelfOrganizingMap som, int numberClusters, int maxIterations) {
         super(som);
         this.numberClusters = numberClusters;

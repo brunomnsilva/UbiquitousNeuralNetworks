@@ -31,6 +31,9 @@ package com.brunomnsilva.neuralnetworks.view.colorscale;
  */
 public class ColorScaleViridis extends ColorScaleFromLevels {
 
+    /**
+     * Default constructor.
+     */
     public ColorScaleViridis() {
         super(new int[][]{
                 {68, 1, 84},

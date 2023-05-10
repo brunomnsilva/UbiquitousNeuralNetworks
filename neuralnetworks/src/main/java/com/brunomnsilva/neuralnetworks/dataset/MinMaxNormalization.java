@@ -38,6 +38,10 @@ public class MinMaxNormalization extends DatasetNormalization {
     private VectorN inDivider;
     private VectorN outDivider;
 
+    /**
+     * Creates a new instance of MinMaxNormalization.
+     * @param dataset the Dataset to compute normalization information from
+     */
     public MinMaxNormalization(Dataset dataset) {
         // Delegate computations
         summary = new DatasetSummary(dataset);

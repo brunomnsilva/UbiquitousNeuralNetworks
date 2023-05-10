@@ -39,7 +39,7 @@ public class DecayFunction {
      * @param pf final value
      * @param t current iteration
      * @param T total iterations
-     * @return the decay function value for iteration <code>t</cosde>
+     * @return the decay function value for iteration <code>t</code>
      */
     public static double exponential(double pi, double pf, int t, int T) {
         Args.requireNonNegative(t, "t");
@@ -57,7 +57,7 @@ public class DecayFunction {
      * @param pf final value
      * @param t current iteration
      * @param T total iterations
-     * @return the decay function value for iteration <code>t</cosde>
+     * @return the decay function value for iteration <code>t</code>
      */
     public static double linear(double pi, double pf, int t, int T) {
         Args.requireNonNegative(t, "t");
@@ -81,7 +81,7 @@ public class DecayFunction {
      * @param C constant to use
      * @param t current iteration
      * @param T total iterations
-     * @return the decay function value for iteration <code>t</cosde>
+     * @return the decay function value for iteration <code>t</code>
      */
     public static double inverseTime(double pi, double pf, double C, int t, int T) {
         Args.requireNonNegative(t, "t");
