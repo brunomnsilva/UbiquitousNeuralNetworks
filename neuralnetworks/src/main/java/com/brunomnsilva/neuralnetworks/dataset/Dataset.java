@@ -37,7 +37,7 @@ import java.util.*;
  * the details of the dataset, see {@link YamlDatasetHeader}.
  *
  * This dataset is {@link Iterable} over {@link DatasetItem} elements. Different traversals
- * can be obtained by shuffling the dataset, see {@link this#shuffle()} and {@link #shuffle(int)}.
+ * can be obtained by shuffling the dataset, see {@link #shuffle()} and {@link #shuffle(int)}.
  *
  * A dataset will not allow adding or removing of items, once it is loaded. We can, however,
  * obtain only "parts" of the dataset through, e.g., {@link #crop(int, int)}.
