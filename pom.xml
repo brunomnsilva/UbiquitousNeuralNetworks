@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.brunomnsilva</groupId>
+    <artifactId>ubiquitousneuralnetworks</artifactId>
+    <version>1.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>neuralnetworks</module>
+        <module>neuralnetworks-examples</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>1.9</maven.compiler.source>
+        <maven.compiler.target>1.9</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/license/mit/</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Bruno Silva</name>
+            <email>brunomnsilva@gmail.com</email>
+            <organization>brunomnsilva</organization>
+            <organizationUrl>http://www.brunomnsilva.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/brunomnsilva/UbiquitousNeuralNetworks.git</connection>
+        <developerConnection>scm:git:ssh://github.com:brunomnsilva/UbiquitousNeuralNetworks.git</developerConnection>
+        <url>http://github.com/brunomnsilva/UbiquitousNeuralNetworks/tree/master</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>1.9</source>
+                    <target>1.9</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
