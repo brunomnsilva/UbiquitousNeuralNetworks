@@ -89,7 +89,9 @@ Some *transient* dependencies are used, namely:
 
 ### Usage and examples
 
-:construction: Until the *Wiki* pages are created with examples, you can check some usage examples in the `neuralnetworks-examples` folder.
+:construction: Check out the [Wiki pages](https://github.com/brunomnsilva/UbiquitousNeuralNetworks/wiki).
+
+:warning: Until they are populated with examples, you can check some usage examples in the `neuralnetworks-examples` folder.
 
 ## Contributing
 
