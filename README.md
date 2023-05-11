@@ -58,15 +58,19 @@ Contains different types of visualizations for all available models and a simple
 
 ### Installation
 
-The library is available through Maven Central. The coordinates are:
+Binaries and dependency information for Maven, Gradle and others can be found at [http://search.maven.org](https://central.sonatype.com/search?q=g%3Acom.brunomnsilva++a%3Aneuralnetworks&smo=true).
+
+Example for Maven:
 
 ```xml
 <dependency>
-  <groupId>com.brunomnsilva</groupId>
-  <artifactId>neuralnetworks</artifactId>
-  <version>1.0.0</version>
+    <groupId>com.brunomnsilva</groupId>
+    <artifactId>neuralnetworks</artifactId>
+    <version>x.y.z</version>
 </dependency>
 ```
+
+You need Java 9 or later.
 
 Some *transient* dependencies are used, namely:
 
