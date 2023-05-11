@@ -24,23 +24,28 @@
 
 package com.brunomnsilva.neuralnetworks.dataset;
 
+import com.brunomnsilva.neuralnetworks.core.Args;
 import com.brunomnsilva.neuralnetworks.core.VectorN;
 
 /**
- * A mean-centered dataset normalization implementation.
+ * A mean-centered and standard deviation of one dataset normalization implementation.
+ * <br/>
+ * In reality this is "standardization", which involves scaling the input feature values to have a mean of zero and a standard deviation of one.
  *
  * @author brunomnsilva
  */
 public class MeanNormalization extends DatasetNormalization {
 
-    private VectorN meanInput, meanOutput;
+    private final VectorN meanInput, meanOutput, stdDevInput, stdDevOutput;
 
     /**
      * Creates a new instance of MeanNormalization.
      * @param dataset the Dataset to compute normalization information from
      */
     public MeanNormalization(Dataset dataset) {
-        // No need to hold the reference after the constructor
+        Args.nullNotPermitted(dataset, "dataset");
+
+        // Compute the mean
         meanInput = VectorN.zeros( dataset.inputDimensionality() );
         meanOutput = VectorN.zeros( dataset.outputDimensionality() );
 
@@ -51,6 +56,41 @@ public class MeanNormalization extends DatasetNormalization {
 
         meanInput.divide( dataset.size() );
         meanOutput.divide( dataset.size() );
+
+        // Compute the standard deviation
+        VectorN stdDevTempInput = VectorN.zeros( dataset.inputDimensionality() );
+        VectorN stdDevTempOutput = VectorN.zeros( dataset.outputDimensionality() );
+
+        for (DatasetItem item : dataset) {
+            VectorN devIn = item.getInput().copy();
+            devIn.subtract(meanInput);
+            devIn.multiply(devIn);
+            stdDevTempInput.add( devIn );
+
+            VectorN devOut = item.getTargetOutput().copy();
+            devOut.subtract(meanOutput);
+            devOut.multiply(devOut);
+            stdDevTempOutput.add( devOut );
+        }
+
+        stdDevTempInput.divide( dataset.size() );
+        stdDevTempOutput.divide( dataset.size() );
+
+        double[] stdIn = new double[ stdDevTempInput.dimensions() ];
+        for(int i=0; i < stdIn.length; ++i) {
+            double v = stdDevTempInput.get(i);
+            v = Math.sqrt(v);
+            stdIn[i] = v;
+        }
+        stdDevInput = VectorN.fromArray(stdIn);
+
+        double[] stdOut = new double[ stdDevTempOutput.dimensions() ];
+        for(int i=0; i < stdOut.length; ++i) {
+            double v = stdDevTempOutput.get(i);
+            v = Math.sqrt(v);
+            stdOut[i] = v;
+        }
+        stdDevOutput = VectorN.fromArray(stdOut);
     }
 
     @Override
@@ -58,14 +98,20 @@ public class MeanNormalization extends DatasetNormalization {
         // Adjust data to mean values
         for (DatasetItem item : dataset) {
             item.getInput().subtract(meanInput);
+            item.getInput().divide(stdDevInput);
+
             item.getTargetOutput().subtract(meanOutput);
+            item.getTargetOutput().divide(stdDevOutput);
         }
     }
 
     @Override
     public void denormalize(Dataset dataset) {
         for (DatasetItem item : dataset) {
+            item.getInput().multiply(stdDevInput);
             item.getInput().add(meanInput);
+
+            item.getTargetOutput().multiply(stdDevOutput);
             item.getTargetOutput().add(meanOutput);
         }
     }
@@ -90,6 +136,7 @@ public class MeanNormalization extends DatasetNormalization {
     public VectorN normalizeInput(VectorN input) {
         VectorN norm = input.copy();
         norm.subtract(meanInput);
+        norm.divide(stdDevInput);
         return norm;
     }
 
@@ -97,12 +144,14 @@ public class MeanNormalization extends DatasetNormalization {
     public VectorN normalizeOutput(VectorN output) {
         VectorN norm = output.copy();
         norm.subtract(meanOutput);
+        norm.divide(stdDevOutput);
         return norm;
     }
 
     @Override
     public VectorN denormalizeInput(VectorN input) {
         VectorN norm = input.copy();
+        norm.multiply(stdDevInput);
         norm.add(meanInput);
         return norm;
     }
@@ -110,6 +159,7 @@ public class MeanNormalization extends DatasetNormalization {
     @Override
     public VectorN denormalizeOutput(VectorN output) {
         VectorN norm = output.copy();
+        norm.multiply(stdDevOutput);
         norm.add(meanOutput);
         return norm;
     }
