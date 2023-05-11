@@ -133,8 +133,6 @@ public class DatasetSummary {
         otherSymbols.setGroupingSeparator(' ');
         NumberFormat formatter = new DecimalFormat("###,###.###", otherSymbols);
 
-        sb.append("--- Dataset Summary ---").append("\n");
-
         int totalVariables = dataset.inputDimensionality() + dataset.outputDimensionality();
 
         sb.append(String.format("%-10s", ""));

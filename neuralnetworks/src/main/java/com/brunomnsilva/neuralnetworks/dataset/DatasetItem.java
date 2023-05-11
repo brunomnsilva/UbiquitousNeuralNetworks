@@ -113,7 +113,7 @@ public class DatasetItem {
 
     @Override
     public String toString() {
-        return "{" + "input=" + input + ", targetOutput=" + targetOutput + "}";
+        return "input=" + input + ", targetOutput=" + targetOutput;
     }
 }
 

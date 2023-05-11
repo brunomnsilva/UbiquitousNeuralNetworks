@@ -303,8 +303,6 @@ public class Dataset implements Iterable<DatasetItem> {
         final NumberFormat numberFormat = new DecimalFormat("###,###.###");
         StringBuilder sb = new StringBuilder();
 
-        sb.append("--- DATA SET INFORMATION ---\n");
-        sb.append("Yaml header contents: \n");
         sb.append(header.toString());
 
         items.stream().limit(ITEM_TOSTRING_LIMIT).forEach(e -> {
@@ -313,10 +311,10 @@ public class Dataset implements Iterable<DatasetItem> {
 
         String formattedSize = String.format("(Total %s)", numberFormat.format(size()));
         if(size() > ITEM_TOSTRING_LIMIT) {
-            sb.append(String.format("--- Limit of %d reached. Omitting remaining items %s ---\n",
+            sb.append(String.format("...\n> Limit of %d reached. Omitting remaining items %s\n",
                     ITEM_TOSTRING_LIMIT, formattedSize));
         } else {
-            sb.append(String.format("--- %s \n", formattedSize));
+            sb.append(String.format("> %s \n", formattedSize));
         }
 
         return sb.toString();
