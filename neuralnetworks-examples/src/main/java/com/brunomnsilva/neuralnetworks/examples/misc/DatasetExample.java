@@ -24,9 +24,7 @@
 
 package com.brunomnsilva.neuralnetworks.examples.misc;
 
-import com.brunomnsilva.neuralnetworks.dataset.Dataset;
-import com.brunomnsilva.neuralnetworks.dataset.DatasetSummary;
-import com.brunomnsilva.neuralnetworks.dataset.InvalidDatasetFormatException;
+import com.brunomnsilva.neuralnetworks.dataset.*;
 import com.brunomnsilva.neuralnetworks.view.GenericWindow;
 import com.brunomnsilva.neuralnetworks.view.dataset.DatasetVisualizationPanel;
 
@@ -34,20 +32,34 @@ import java.io.IOException;
 
 public class DatasetExample {
     public static void main(String[] args) {
+
+        Dataset dataset = null;
         try {
-            Dataset dataset = new Dataset("datasets/household_power_sensor.data");
-
-            DatasetSummary summary = new DatasetSummary(dataset);
-            System.out.println(summary);
-
-            DatasetVisualizationPanel panel = new DatasetVisualizationPanel(dataset);
-
-            GenericWindow window = GenericWindow.horizontalLayout("Dataset", panel);
-            window.exitOnClose();
-            window.setVisible(true);
-
+            dataset = new Dataset("datasets/household_power_sensor.data");
         } catch (IOException | InvalidDatasetFormatException e) {
-            throw new RuntimeException(e);
+            System.err.println(e.getMessage());
+            System.exit(1);
         }
+
+        DatasetSummary summary = new DatasetSummary(dataset);
+        System.out.println(summary);
+
+        DatasetVisualizationPanel panel = new DatasetVisualizationPanel(dataset);
+        GenericWindow window = GenericWindow.horizontalLayout(dataset.getName(), panel);
+        window.exitOnClose();
+        window.setVisible(true);
+
+        DatasetNormalization scaling = new MinMaxNormalization(dataset);
+        scaling.normalize(dataset);
+
+        DatasetSummary summary2 = new DatasetSummary(dataset);
+        System.out.println(summary2);
+
+        DatasetTrainTestSplit split = DatasetTrainTestSplit.split(dataset, 0.7);
+        Dataset trainingData = split.getTrainingSet();
+        Dataset testData = split.getTestSet();
+
+        System.out.println(trainingData);
+        System.out.println(testData);
     }
 }
