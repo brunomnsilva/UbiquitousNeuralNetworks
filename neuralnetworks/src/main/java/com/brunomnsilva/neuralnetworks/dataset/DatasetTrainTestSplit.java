@@ -24,6 +24,8 @@
 
 package com.brunomnsilva.neuralnetworks.dataset;
 
+import com.brunomnsilva.neuralnetworks.core.Args;
+
 /**
  * Performs a train/test split for a given dataset through {@link #split(Dataset, double)}.
  *
@@ -31,8 +33,8 @@ package com.brunomnsilva.neuralnetworks.dataset;
  */
 public class DatasetTrainTestSplit {
 
-    private Dataset trainingSet;
-    private Dataset testSet;
+    private final Dataset trainingSet;
+    private final Dataset testSet;
 
     private DatasetTrainTestSplit(Dataset trainingSet, Dataset testSet) {
         this.trainingSet = trainingSet;
@@ -53,10 +55,7 @@ public class DatasetTrainTestSplit {
      * @throws IllegalArgumentException if <code>split</code> is &ge; 0 or &le; 1.
      */
     public static DatasetTrainTestSplit split(final Dataset dataset, double trainSplit) {
-        if(dataset == null) {
-            String error = "Dataset cannot be null.";
-            throw new IllegalArgumentException(error);
-        }
+        Args.nullNotPermitted(dataset, "dataset");
 
         if(dataset.size() < 2) {
             String error = String.format("Too small dataset to split (size = %d). Must be in > 2.", dataset.size());
