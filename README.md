@@ -9,6 +9,8 @@ It includes a variety of features and tools to help you create powerful and accu
 
 ![](assets/logo.svg)
 
+:construction: Check out the [Wiki pages](https://github.com/brunomnsilva/UbiquitousNeuralNetworks/wiki).
+
 ## Features
 
 ### Models
