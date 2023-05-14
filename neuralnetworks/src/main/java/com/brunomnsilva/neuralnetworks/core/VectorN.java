@@ -396,6 +396,42 @@ public class VectorN implements Comparable<VectorN> {
     }
 
     /**
+     * Raises each component of the vector to the power of <code>exp</code>.
+     *
+     * @param exp the exponent to raise each component of the vector to
+     * @throws IllegalArgumentException if the exponent is not a finite number
+     */
+    public void pow(double exp) {
+        Args.requireFinite(exp, "exp");
+
+        for (int i = 0; i < vector.length; i++) {
+            vector[i] = StrictMath.pow(vector[i], exp) ;
+        }
+    }
+
+    /**
+     * Square root each component of the vector.
+     * <br/>
+     * This operation will fail if any of the components of the vector is negative.
+     * In this case the vector will remain unchanged.
+     * @throws IllegalStateException if the vector has negative components
+     */
+    public void sqrt() {
+        // Validate components
+        VectorN copy = this.copy();
+        for (int i = 0; i < copy.vector.length; ++i) {
+            if( copy.vector[i] < 0)
+                throw new IllegalStateException("The vector has negative components.");
+
+            copy.vector[i] = StrictMath.sqrt( copy.vector[i] ) ;
+        }
+
+        for (int i=0; i < vector.length; ++i) {
+            vector[i] = copy.vector[i];
+        }
+    }
+
+    /**
      * Computes the dot product with another vector.
      *
      * @param v the other vector

@@ -57,40 +57,27 @@ public class MeanNormalization extends DatasetNormalization {
         meanInput.divide( dataset.size() );
         meanOutput.divide( dataset.size() );
 
-        // Compute the standard deviation
-        VectorN stdDevTempInput = VectorN.zeros( dataset.inputDimensionality() );
-        VectorN stdDevTempOutput = VectorN.zeros( dataset.outputDimensionality() );
+        // Standardization: center around mean and with std deviation of one
+        stdDevInput = VectorN.zeros( dataset.inputDimensionality() );
+        stdDevOutput = VectorN.zeros( dataset.outputDimensionality() );
 
         for (DatasetItem item : dataset) {
             VectorN devIn = item.getInput().copy();
             devIn.subtract(meanInput);
             devIn.multiply(devIn);
-            stdDevTempInput.add( devIn );
+            stdDevInput.add( devIn );
 
             VectorN devOut = item.getTargetOutput().copy();
             devOut.subtract(meanOutput);
             devOut.multiply(devOut);
-            stdDevTempOutput.add( devOut );
+            stdDevOutput.add( devOut );
         }
 
-        stdDevTempInput.divide( dataset.size() );
-        stdDevTempOutput.divide( dataset.size() );
+        stdDevInput.divide( dataset.size() );
+        stdDevOutput.divide( dataset.size() );
 
-        double[] stdIn = new double[ stdDevTempInput.dimensions() ];
-        for(int i=0; i < stdIn.length; ++i) {
-            double v = stdDevTempInput.get(i);
-            v = Math.sqrt(v);
-            stdIn[i] = v;
-        }
-        stdDevInput = VectorN.fromArray(stdIn);
-
-        double[] stdOut = new double[ stdDevTempOutput.dimensions() ];
-        for(int i=0; i < stdOut.length; ++i) {
-            double v = stdDevTempOutput.get(i);
-            v = Math.sqrt(v);
-            stdOut[i] = v;
-        }
-        stdDevOutput = VectorN.fromArray(stdOut);
+        stdDevInput.sqrt();
+        stdDevOutput.sqrt();
     }
 
     @Override
