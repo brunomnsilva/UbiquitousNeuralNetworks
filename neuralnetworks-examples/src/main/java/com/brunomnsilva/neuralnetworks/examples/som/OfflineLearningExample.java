@@ -24,21 +24,15 @@
 
 package com.brunomnsilva.neuralnetworks.examples.som;
 
+import com.brunomnsilva.neuralnetworks.core.Projections;
 import com.brunomnsilva.neuralnetworks.core.VectorN;
-import com.brunomnsilva.neuralnetworks.dataset.Dataset;
-import com.brunomnsilva.neuralnetworks.dataset.DatasetNormalization;
-import com.brunomnsilva.neuralnetworks.dataset.InvalidDatasetFormatException;
-import com.brunomnsilva.neuralnetworks.dataset.MinMaxNormalization;
-import com.brunomnsilva.neuralnetworks.dataset.DatasetUtils;
+import com.brunomnsilva.neuralnetworks.dataset.*;
 import com.brunomnsilva.neuralnetworks.models.som.*;
 import com.brunomnsilva.neuralnetworks.models.som.clustering.DBSCANClustering;
 import com.brunomnsilva.neuralnetworks.models.som.impl.BasicSOM;
-import com.brunomnsilva.neuralnetworks.view.ExportSVGWrapperPanel;
-import com.brunomnsilva.neuralnetworks.view.MessagePanel;
-import com.brunomnsilva.neuralnetworks.core.Projections;
+import com.brunomnsilva.neuralnetworks.view.GenericWindow;
 import com.brunomnsilva.neuralnetworks.view.chart.Plot2D;
 import com.brunomnsilva.neuralnetworks.view.som.*;
-import com.brunomnsilva.neuralnetworks.view.GenericWindow;
 
 import javax.swing.*;
 import java.io.IOException;

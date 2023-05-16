@@ -25,8 +25,8 @@
 package com.brunomnsilva.neuralnetworks.examples.misc;
 
 import com.brunomnsilva.neuralnetworks.core.Projections;
-import com.brunomnsilva.neuralnetworks.core.VectorN;
-import com.brunomnsilva.neuralnetworks.dataset.*;
+import com.brunomnsilva.neuralnetworks.dataset.Dataset;
+import com.brunomnsilva.neuralnetworks.dataset.DatasetUtils;
 import com.brunomnsilva.neuralnetworks.view.GenericWindow;
 import com.brunomnsilva.neuralnetworks.view.chart.Plot2D;
 
