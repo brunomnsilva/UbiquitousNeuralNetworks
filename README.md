@@ -4,8 +4,9 @@ Ubiquitous Neural Networks is a framework and collection of neural network model
 [PhD Thesis](http://hdl.handle.net/10362/19974). The original code was completely refactored and is
 now made available through this project. 
 
-It allows you to easily build and train neural networks in Java. 
-It includes a variety of features and tools to help you create powerful and accurate models for your data.
+It allows you to easily build and train neural networks in Java; you can also extend the core functionality for particular use-cases.
+
+It includes a variety of features and visualizations to help you create powerful and accurate models for your data.
 
 ![](assets/logo.svg)
 
@@ -20,14 +21,14 @@ This project implements three types of **neural network models and variants**:
 - **`SelfOrganizingMap`** (SOM): a type of neural network that projects high-dimensional data onto a 2d map, maintaining input-space topological relationships. Useful for exploratory cluster analysis and, possibly, classification.
   - `BasicSOM` - *Classical* and *Batch* algorithms are available;
   - For *streaming data*, i.e., variants that can learn incrementally over time, estimating its learning parameters on-the-fly:
-    - `UbiSOM` - The Ubiquitous Self-Organizing Map;
+    - `UbiSOM` - The Ubiquitous Self-Organizing Map (*a contribution from my thesis*);
     - `PLSOM` - The Parameterless Self-Organizing Map;
     - `DSOM` - The Dynamic Self-Organizing Map.
 
   > All SOM models allow setting the lattice type (hexagonal or rectangular) and the metric distance to use (euclidean or manhattan); but you
   > can easily create your own lattices and metric distances. 
 
-- **`StreamART2A`**: a neural network architecture, based on Adaptive Resonance Theory, that uses a process of competitive learning and resonance to summarize input patterns in streaming data.
+- **`StreamART2A`** (*a contribution from my thesis*): a neural network architecture, based on Adaptive Resonance Theory, that uses a process of competitive learning and resonance to summarize input patterns in streaming data.
 
 - **`MLPNetwork` (Multilayer Perceptron)**: a feedforward neural network architecture consisting of multiple layers of nodes that can approximate any function with enough hidden units. Useful for classification and regression.
 
@@ -95,9 +96,13 @@ Some *transient* dependencies are used, namely:
 
 :warning: Until they are populated with examples, you can check some usage examples in the `neuralnetworks-examples` folder.
 
+### Citing
+
+:construction:
+
 ## Contributing
 
-You can clone the repository and submit a pull request. Pull requests should adhere to the existing naming and *Javadoc* conventions.
+You can fork the repository and submit a pull request. Pull requests should adhere to the existing naming and *Javadoc* conventions.
 
 ## License
 
