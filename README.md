@@ -49,13 +49,24 @@ Contains different types of visualizations for all available models and a simple
 
 ![](assets/som-visualizations-example.png)
 
+- U-matrix
+- Component planes
+- Hit-Map
+- Spatial visualization of input data and lattice
+- Clustering of prototypes
+- ...
+
 #### StreamART2A
 
 ![](assets/streamart2a-visualizations-example.png)
 
+- Spatial visualization of input data and generated micro-categories
+
 #### MLP Networks
 
 ![](assets/mlp-visualizations-example.png)
+
+- Network architecture, weights and bias
 
 ## Documentation
 
