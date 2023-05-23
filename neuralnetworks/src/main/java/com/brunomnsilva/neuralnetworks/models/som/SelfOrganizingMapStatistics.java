@@ -41,11 +41,11 @@ import com.brunomnsilva.neuralnetworks.dataset.DatasetItem;
  */
 public class SelfOrganizingMapStatistics {
 
-    /** The computed quantization error. */private double quantizationError;
-    private double topographicError;
+    /** The computed quantization error. */
+    private final double quantizationError;
 
     /** The computed topographic error. */
-    private static double SQRT_2 = Math.sqrt(2);
+    private final double topographicError;
 
     /**
      * Private constructor that initializes a SelfOrganizingMapStatistics instance.
