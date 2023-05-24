@@ -112,8 +112,8 @@ public class InteractiveGaussianClouds extends JPanel implements MouseListener, 
     private static final int HEIGHT = 500;
     /** Help instructions */
     private static final String instructions = "\u24d8 LClick to drag; "
-            + "Ctrl+LClick to delete; Shit+LClick bring forward; "
-            + "RClick to add new cloud; Scroll to (in/de)crease variance. F12 to change theme.";
+            + "Ctrl+LClick delete; Shit+LClick bring forward; "
+            + "RClick add new cloud; Scroll (in/de)crease variance. F12 theme. O ording - R no rand.";
 
     /** Theme array */
     private final Theme[] themes = new Theme[] {
@@ -124,7 +124,8 @@ public class InteractiveGaussianClouds extends JPanel implements MouseListener, 
     private int currentThemeIndex = 0;
 
     /** UbiSOM instance */
-    private final StreamingSOM model;
+    //private final StreamingSOM model;
+    private final UbiSOM model;
 
     /** Normalization instance */
     public final DataStreamFeatureRange normalization;
@@ -458,6 +459,12 @@ public class InteractiveGaussianClouds extends JPanel implements MouseListener, 
         int keyCode = evt.getKeyCode();
         if (keyCode == KeyEvent.VK_F12) {
             cycleTheme();
+        }
+        if (keyCode == KeyEvent.VK_O) {
+            model.orderingState();
+        }
+        if (keyCode == KeyEvent.VK_R) {
+            model.setRandomizePrototypes(false, 1);
         }
     }
 
