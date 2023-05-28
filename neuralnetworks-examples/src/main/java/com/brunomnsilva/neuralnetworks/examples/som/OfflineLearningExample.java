@@ -47,12 +47,12 @@ public class OfflineLearningExample {
             //Dataset dataset = new Dataset("datasets/gaussian2d.data");
             //Dataset dataset = new Dataset("datasets/uniform2d.data");
             //Dataset dataset = new Dataset("datasets/complex_density.data");
-            Dataset dataset = new Dataset("datasets/hepta.data");
+            //Dataset dataset = new Dataset("datasets/hepta.data");
             //Dataset dataset = new Dataset("datasets/sphere.data");
             //Dataset dataset = new Dataset("datasets/chainlink.data");
             //Dataset dataset = new Dataset("datasets/wine.data");
             //Dataset dataset = new Dataset("datasets/cactus.data");
-            //Dataset dataset = new Dataset("datasets/iris.data");
+            Dataset dataset = new Dataset("datasets/iris.data");
             DatasetNormalization normalization = new MinMaxNormalization(dataset);
             normalization.normalize(dataset);
 

@@ -9,21 +9,41 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
+/**
+ * Unified Distance Matrix (uMatrix).
+ * <br/>
+ * This class is one of the main visualization tools for the SOM. It is an exploratory cluster analysis visualization.
+ * <br/>
+ * The U-Matrix (Unified Distance Matrix) visualization is a popular way of visualizing a Self-Organizing Map (SOM).
+ * It is a visual representation of the distances between SOM neurons. Visualizing the U-Matrix is a good way to get
+ *  a sense of the topology of the SOM. Here we just calculate and keep the distance calculated
+ * between adjacent neurons.
+ *
+ * <br/>
+ *
+ *  (refactored by @nmm on 2018-05-28)
+ ** */
+
+
 public class UMatrix {
 
     public enum Mode {MEDIAN, MEAN, MIN, MAX}
 
     private double[][] values;
-
+    SelfOrganizingMap som;
 
     private Mode mode;
     private int Ux;
     private int Uy;
-    public UMatrix(int width, int height) {
+    public UMatrix(SelfOrganizingMap som) {
+        int width = som.getWidth();
+        int height = som.getHeight();
+
         Ux = 2 * width - 1;
         Uy = 2 * height - 1;
-        this.values = new double[width][height];
+        this.values = new double[Ux][Uy];
         mode = Mode.MEAN;
+        this.som = som;
     }
 
     public double get(int x, int y) {
@@ -175,15 +195,15 @@ public class UMatrix {
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName));
 
-            //out.write("U-Matrix\n");
-            //out.write("xSize: " + xSize + "\n");
-            //out.write("ySize: " + ySize + "\n");
-            out.write("# date: " + new Date() + "\n");
+            out.write("# U-Matrix date: " + new Date() + "\n");
+            out.write("# xSize: " + Ux + "\n");
+            out.write("# ySize: " + Uy + "\n");
             out.write("# mode: " + mode + "\n");
             //out.write("data:\n");
             for (int i = 0; i < Ux; i++) {
-                for (int j = 0; j < Uy; j++)
-                    out.write(get(i, j) + ", ");
+                out.write( String.valueOf(get(i, 0)) );
+                for (int j = 1; j < Uy; j++)
+                    out.write( ", "+get(i, j) );
                 out.write("\n");
             }
             out.close();
