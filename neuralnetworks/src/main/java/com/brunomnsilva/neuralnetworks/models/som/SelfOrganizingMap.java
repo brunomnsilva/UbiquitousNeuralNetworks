@@ -186,6 +186,27 @@ public abstract class SelfOrganizingMap extends AbstractObservable
         return bmu;
     }
 
+    public final PrototypeNeuron[] bestMatchingUnitsFor(VectorN input) {
+        PrototypeNeuron[] bmu = new PrototypeNeuron[2];
+        bmu[0]= prototypesList.get(0);
+        double minDist = metricDistance.distanceBetween(bmu[0].getPrototype(), input);
+        double minDist2 = minDist;
+
+        for (PrototypeNeuron p : prototypesList) {
+            double dist = metricDistance.distanceBetween(p.getPrototype(), input);
+            if(dist < minDist) {
+                bmu[1] = bmu[0];
+                bmu[0] = p;
+                minDist2 = minDist;
+                minDist = dist;
+            } else if (dist < minDist2) {
+                bmu[1] = p;
+                minDist2 = dist;
+            }
+        }
+        return bmu;
+    }
+
     /**
      * Returns the width of the 2d SOM lattice.
      * @return the width

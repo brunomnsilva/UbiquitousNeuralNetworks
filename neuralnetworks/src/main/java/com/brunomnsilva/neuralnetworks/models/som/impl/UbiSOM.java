@@ -148,17 +148,17 @@ public class UbiSOM extends StreamingSOM {
     }
 
 
-    public PrototypeNeuron learnGetBmu(VectorN input) {
-        PrototypeNeuron bmu = bestMatchingUnitFor(input);
+    public PrototypeNeuron[] learnGetBmus(VectorN input) {
+        PrototypeNeuron[] bmu = bestMatchingUnitsFor(input);
 
-        currentState.process(bmu, input);
+        currentState.process(bmu[0], input);
 
         return bmu;
     }
 
     @Override
     public void learn(VectorN input) {
-        learnGetBmu(input);
+        learnGetBmus(input);
     }
 
 
