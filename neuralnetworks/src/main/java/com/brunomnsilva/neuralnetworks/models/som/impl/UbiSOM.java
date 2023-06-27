@@ -95,6 +95,16 @@ public class UbiSOM extends StreamingSOM {
                 alpha_0,alpha_f, sigma_0, sigma_f, beta, T);
     }
 
+    // set prototype randomization on ordering state on or off
+
+    private Boolean randomizePrototypes = true;
+    private Integer nResetRandomizePrototypes = 0;
+
+    public void setRandomizePrototypes(boolean randomize, int nResetRandomizePrototypes) {
+        this.randomizePrototypes = randomize;
+        this.nResetRandomizePrototypes = nResetRandomizePrototypes;
+    }
+
     public void orderingState() {
         int width = getWidth();
         int height = getHeight();
@@ -103,7 +113,7 @@ public class UbiSOM extends StreamingSOM {
         for(int w=0; w < width; ++w) {
             for(int h=0; h < height; ++h) {
                 // Reset (randomize) prototypes
-                get(w, h).getPrototype().randomize();
+                if(randomizePrototypes) get(w, h).getPrototype().randomize();
 
                 // Reset timestamps
                 activityTimestamps[w][h] = 0;
@@ -112,6 +122,13 @@ public class UbiSOM extends StreamingSOM {
         }
         // Transition to ordering state
         setState(new UbiSOMStateOrdering(this, alpha_0, alpha_f,sigma_0, sigma_f, T));
+
+        if(nResetRandomizePrototypes <= 0) {
+            randomizePrototypes = true;
+        } else {
+            nResetRandomizePrototypes--;
+        }
+
     }
 
     public void convergingState() {
@@ -130,12 +147,20 @@ public class UbiSOM extends StreamingSOM {
         this.currentState = newState;
     }
 
+
+    public PrototypeNeuron[] learnGetBmus(VectorN input) {
+        PrototypeNeuron[] bmu = bestMatchingUnitsFor(input);
+
+        currentState.process(bmu[0], input);
+
+        return bmu;
+    }
+
     @Override
     public void learn(VectorN input) {
-        PrototypeNeuron bmu = bestMatchingUnitFor(input);
-
-        currentState.process(bmu, input);
+        learnGetBmus(input);
     }
+
 
     @Override
     public String getImplementationName() {

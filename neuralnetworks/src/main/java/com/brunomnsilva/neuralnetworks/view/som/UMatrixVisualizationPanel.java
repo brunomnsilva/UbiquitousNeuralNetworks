@@ -26,7 +26,7 @@ package com.brunomnsilva.neuralnetworks.view.som;
 
 import com.brunomnsilva.neuralnetworks.models.som.SelfOrganizingMap;
 
-import java.util.Arrays;
+//import java.util.Arrays;
 
 /**
  * An implementation of the U-Matrix visualization. It is an exploratory cluster analysis visualization.
@@ -57,41 +57,91 @@ import java.util.Arrays;
  */
 public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
 
-    public enum Mode {MEDIAN, MEAN, MIN, MAX};
+    UMatrix.Mode mode;
 
-    private Mode mode;
+    //private SelfOrganizingMap som;
+    private GenericGridPanel grid = null;
+    private class GridUMat extends UMatrix {
+        // Note: When using grid, there is no need of set/get for UMatrix values
+        // however, this way it is possible to save and tests standalone UMatrix
+        public GridUMat(SelfOrganizingMap som) {
+            super(som);
+        }
 
-    public UMatrixVisualizationPanel(SelfOrganizingMap som, Mode mode) {
+        public void set(double value, int x, int y) {
+            super.set(value, x, y);
+            if(grid != null) {
+                grid.set(value, x, y);
+            }
+        }
+
+        public double get(int x, int y) {
+            return super.get(x, y);
+        }
+    }
+
+    private GridUMat uMatrix = null;
+
+    public UMatrixVisualizationPanel(SelfOrganizingMap som, UMatrix.Mode mode) {
         super(som, "U-Matrix", som.getWidth() * 2 - 1, som.getHeight() * 2 - 1);
-
+        uMatrix = new GridUMat(som);
+        //uMatrix.setMode(mode);
         this.mode = mode;
-
         // Add context menu entries
         addContextMenuEntries();
     }
 
+
     private void addContextMenuEntries() {
         addContextMenuAction("Minimum distances", e -> {
-            setMode(Mode.MIN);
+            setMode(UMatrix.Mode.MIN);
         });
         addContextMenuAction("Mean distances", e -> {
-            setMode(Mode.MEAN);
+            setMode(UMatrix.Mode.MEAN);
         });
         addContextMenuAction("Median distances", e -> {
-            setMode(Mode.MEDIAN);
+            setMode(UMatrix.Mode.MEDIAN);
         });
         addContextMenuAction("Maximum distances", e -> {
-            setMode(Mode.MAX);
+            setMode(UMatrix.Mode.MAX);
         });
     }
 
-    public void setMode(Mode mode) {
+    public void setMode(UMatrix.Mode mode) {
         this.mode = mode;
         super.update();
     }
 
     @Override
     protected void updateGridValues(SelfOrganizingMap som, GenericGridPanel grid) {
+        this.grid = grid;
+        uMatrix.updateValues(som);
+        uMatrix.setMode(this.mode);
+
+    }
+
+    @Override
+    protected String description() {
+        return "Depicts distances between prototype's values. Useful to detect clusters.";
+    }
+
+    
+     /*    Inicial code without class UMatrix and GridUMat
+    private void set(double value, int x, int y) {
+        grid.set(value, x, y);
+    }
+
+    private double get(int x, int y) {
+        return grid.get(x, y);
+    }
+
+    @Override
+    protected void updateGridValues(SelfOrganizingMap som, GenericGridPanel grid) {
+        this.grid = grid;
+        updateGridValues(som);
+    }
+
+    private void updateGridValues(SelfOrganizingMap som) {
         double sqrt_2 = Math.sqrt(2);
 
         int My = som.getHeight();
@@ -103,6 +153,7 @@ public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
         double dz1;
         double dz2;
 
+
         // U-Matrix computation. I don't quite remember what's the origin
         // of this algorithm, but I suspect it's an adaptation on Matlab's
         // algorithm. TODO: It remains to validate this against different lattices
@@ -112,20 +163,20 @@ public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
                     // Horizontal
                     //uMatrix[2*i-1][2*j-2] = map[i-1][j-1].distance(map[i][j-1]);
                     double v = som.distanceBetweenPrototypes(som.get(i-1, j-1), som.get(i, j-1));
-                    grid.set(v, 2*i-1, 2*j-2);
+                    set(v, 2*i-1, 2*j-2);
                 }
                 if(j<My) {
                     // Vertical
                     //uMatrix[2*i-2][2*j-1] = map[i-1][j-1].distance(map[i-1][j]);
                     double v = som.distanceBetweenPrototypes(som.get(i-1, j-1), som.get(i-1, j));
-                    grid.set(v, 2*i-2, 2*j-1);
+                    set(v, 2*i-2, 2*j-1);
                 }
                 if(j<My && i<Mx) {
                     // Diagonals
                     dz1 = som.distanceBetweenPrototypes(som.get(i-1, j-1), som.get(i, j));
                     dz2 = som.distanceBetweenPrototypes(som.get(i-1, j), som.get(i, j-1));
                     //uMatrix[2*i-1][2*j-1] = (dz1+dz2)/(2*sqrt_2);
-                    grid.set((dz1+dz2)/(2*sqrt_2), 2*i-1, 2*j-1);
+                    set((dz1+dz2)/(2*sqrt_2), 2*i-1, 2*j-1);
                 }
             }
         }
@@ -135,57 +186,57 @@ public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
             for(int i=1; i<=Ux; i+=2) {
                 if(i>1 && j>1 && i<Ux && j<Uy) //middle part of the map
                     a = new double[]{
-                            grid.get(i-2,j-1),
-                            grid.get(i,j-1),
-                            grid.get(i-2, j-1),
-                            grid.get(i-1, j) };
+                            get(i-2,j-1),
+                            get(i,j-1),
+                            get(i-2, j-1),
+                            get(i-1, j) };
                 else if(j==1 && i>1 && i<Ux) //upper edge
                     a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i, j-1),
-                            grid.get(i-1, j) };
+                            get(i-2, j-1),
+                            get(i, j-1),
+                            get(i-1, j) };
                 else if(j==Uy && i>1 && i<Ux) //lower edge
                     a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i, j-1),
-                            grid.get(i-1, j-2) };
+                            get(i-2, j-1),
+                            get(i, j-1),
+                            get(i-1, j-2) };
                 else if(i==1 && j>1 && j<Uy)
                     a = new double[]{
-                            grid.get(i, j-1),
-                            grid.get(i-1, j-2),
-                            grid.get(i-1, j) };
+                            get(i, j-1),
+                            get(i-1, j-2),
+                            get(i-1, j) };
                 else if(i==Ux && j>1 && j<Uy)
                     a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i-1, j-2),
-                            grid.get(i-1, j) };
+                            get(i-2, j-1),
+                            get(i-1, j-2),
+                            get(i-1, j) };
                 else if(i==1 && j==1)
                     a = new double[]{
-                            grid.get(i, j-1),
-                            grid.get(i-1, j) };
+                            get(i, j-1),
+                            get(i-1, j) };
                 else if(i==Ux && j==1)
                     a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i-1, j) };
+                            get(i-2, j-1),
+                            get(i-1, j) };
                 else if(i==1 && j==Uy)
                     a = new double[]{
-                            grid.get(i, j-1),
-                            grid.get(i-1, j-2) };
+                            get(i, j-1),
+                            get(i-1, j-2) };
                 else if(i==Ux && j==Uy)
                     a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i-1, j-2) };
+                            get(i-2, j-1),
+                            get(i-1, j-2) };
                 else
                     a = new double[]{0.0};
 
                 //uMatrix[i-1][j-1] = eval(a, 0);
                 double v = eval(a, this.mode);
-                grid.set(v, i-1, j-1);
+                set(v, i-1, j-1);
             }
         }
     }
 
-    private static double eval(double[] v, Mode mode) {
+    private static double eval(double[] v, UMatrix.Mode mode) {
 
         int len = v.length;
         if(len == 1) {
@@ -193,33 +244,33 @@ public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
             return v[0];
         }
         else if(len==2) {
-            if(mode == Mode.MEDIAN || mode == Mode.MEAN) return ( (v[0]+v[1])/2 );
-            if(mode == Mode.MIN)    return ( (v[0] < v[1]) ? v[0] : v[1] );
-            if(mode == Mode.MAX)    return ( (v[0] > v[1]) ? v[0] : v[1] );
+            if(mode == UMatrix.Mode.MEDIAN || mode == UMatrix.Mode.MEAN) return ( (v[0]+v[1])/2 );
+            if(mode == UMatrix.Mode.MIN)    return ( (v[0] < v[1]) ? v[0] : v[1] );
+            if(mode == UMatrix.Mode.MAX)    return ( (v[0] > v[1]) ? v[0] : v[1] );
         }
         else if(len == 3) {
-            if(mode == Mode.MEAN)   return ((v[0]+v[1]+v[2])/3);
+            if(mode == UMatrix.Mode.MEAN)   return ((v[0]+v[1]+v[2])/3);
 
             Arrays.sort(v);         //sort ascending
-            if(mode == Mode.MEDIAN) return v[1];
-            if(mode == Mode.MIN)    return v[0];
-            if(mode == Mode.MAX)    return v[2];
+            if(mode == UMatrix.Mode.MEDIAN) return v[1];
+            if(mode == UMatrix.Mode.MIN)    return v[0];
+            if(mode == UMatrix.Mode.MAX)    return v[2];
         }
         else if(len==4) {
-            if(mode == Mode.MEAN)   return ((v[0]+v[1]+v[2]+v[3])/4);
+            if(mode == UMatrix.Mode.MEAN)   return ((v[0]+v[1]+v[2]+v[3])/4);
 
             Arrays.sort(v);         //sort ascending
-            if(mode == Mode.MEDIAN) return ((v[1]+v[2])/2);
-            if(mode == Mode.MIN)    return v[0];
-            if(mode == Mode.MAX)    return v[3];
+            if(mode == UMatrix.Mode.MEDIAN) return ((v[1]+v[2])/2);
+            if(mode == UMatrix.Mode.MIN)    return v[0];
+            if(mode == UMatrix.Mode.MAX)    return v[3];
         }
 
         //not expecting more than 4 elements in vector
         return 0.0;
     }
 
-    @Override
-    protected String description() {
-        return "Depicts distances between prototype's values. Useful to detect clusters.";
-    }
+       */
+
+
+    
 }

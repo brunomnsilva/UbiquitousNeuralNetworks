@@ -119,7 +119,8 @@ public class SelfOrganizingMapVisualizationFactory {
      * @return a new instance of the visualization
      */
     public static UMatrixVisualizationPanel createUMatrix(SelfOrganizingMap som) {
-        UMatrixVisualizationPanel panel = new UMatrixVisualizationPanel(som, UMatrixVisualizationPanel.Mode.MEDIAN);
+        UMatrixVisualizationPanel panel = new UMatrixVisualizationPanel(som, UMatrix.Mode.MEDIAN);
+        //UMatrixVisualizationPanel panel = new UMatrixVisualizationPanel(som, UMatrix.Mode.MEDIAN);
         panel.update();
         return panel;
     }
