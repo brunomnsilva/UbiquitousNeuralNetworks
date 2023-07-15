@@ -22,27 +22,19 @@
  * THE SOFTWARE.
  */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.brunomnsilva.neuralnetworks.view;
 
 import com.brunomnsilva.neuralnetworks.core.Args;
 
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
 
 /**
- * A utility class for creating generic windows with different layouts.
+ * A utility class for creating generic windows with different layouts and with an SVG export option.
  *
  * @author brunomnsilva
  */
-public class GenericWindow extends JFrame {
-
-    protected GenericWindow() {}
-
+public class GenericWindowWithSVGExport extends GenericWindow {
     /**
      * Creates a new GenericWindow with a horizontal layout.
      *
@@ -51,7 +43,7 @@ public class GenericWindow extends JFrame {
      * @return a new GenericWindow instance
      */
     public static GenericWindow horizontalLayout(String title, JPanel... panels) {
-        return new GenericWindow(title, 1, 0, panels);
+        return new GenericWindowWithSVGExport(title, 1, 0, panels);
     }
 
     /**
@@ -62,7 +54,7 @@ public class GenericWindow extends JFrame {
      * @return a new GenericWindow instance
      */
     public static GenericWindow verticalLayout(String title, JPanel... panels) {
-        return new GenericWindow(title, 0, 1, panels);
+        return new GenericWindowWithSVGExport(title, 0, 1, panels);
     }
 
     /**
@@ -75,18 +67,18 @@ public class GenericWindow extends JFrame {
      * @return a new GenericWindow instance
      */
     public static GenericWindow gridLayout(String title, int layoutRows, int layoutCols, JPanel... panels) {
-        return new GenericWindow(title, layoutRows, layoutCols, panels);
+        return new GenericWindowWithSVGExport(title, layoutRows, layoutCols, panels);
     }
 
     /**
-     * Creates a new GenericWindow with the specified layout and panels.
+     * Creates a new GenericWindowWithSVGExport with the specified layout and panels.
      *
      * @param title      the window title
      * @param layoutRows the number of rows in the layout
      * @param layoutCols the number of columns in the layout
      * @param panels     an array of JPanels to add to the window
      */
-    private GenericWindow(String title, int layoutRows, int layoutCols, JPanel... panels) {
+    private GenericWindowWithSVGExport(String title, int layoutRows, int layoutCols, JPanel... panels) {
         Args.nullNotPermitted(title, "title");
         Args.nullNotPermitted(panels, "panels");
         Args.requireNonNegative(layoutRows, "layoutRows");
@@ -95,36 +87,22 @@ public class GenericWindow extends JFrame {
         setTitle(title);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Can be overridden by setter
 
-        GridLayout layout = new GridLayout(layoutRows, layoutCols);
-        getContentPane().setBackground(LookAndFeel.colorBackground);
-        getContentPane().setLayout(layout);
+        JPanel content = new JPanel(new GridLayout(layoutRows, layoutCols));
+        content.setBackground(LookAndFeel.colorBackground);
 
         for (JPanel p : panels) {
             if (p != null)
-                getContentPane().add(p);
+                content.add(p);
         }
+
+        JPanel svgPanel = new ExportSVGWrapperPanel(content);
+
+        this.setLayout(new BorderLayout());
+        this.setBackground(LookAndFeel.colorBackground);
+        this.getContentPane().add(svgPanel, BorderLayout.CENTER);
+
 
         pack(); // Compute content's preferred sizes and resize window
         setLocationRelativeTo(null); // Center on screen
     }
-
-    /**
-     * Sets the window to exit the application on close and displays a confirmation dialog.
-     */
-    public void exitOnClose() {
-        final JFrame window = this;
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        this.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if (JOptionPane.showConfirmDialog(window,
-                        "Are you sure you want to exit the application?", "Exit Application?",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-                    System.exit(0);
-                }
-            }
-        });
-    }
-
 }
