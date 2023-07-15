@@ -268,6 +268,18 @@ public class VectorN implements Comparable<VectorN> {
     }
 
     /**
+     * Adds the specified value to every component of the vector.
+     * <br>
+     * You can use this method to subtract, if the specified value is negative.
+     * @param val the value to add to every component of the vector
+     */
+    public void add(double val) {
+        for (int i = 0; i < vector.length; i++) {
+            vector[i] += val;
+        }
+    }
+    
+    /**
      * Component-wise addition with another vector.
      *
      * @param v the vector to add
