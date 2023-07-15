@@ -28,9 +28,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.brunomnsilva</groupId>
     <artifactId>neuralnetworks</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>A framework and collection of neural network models.</description>
+    <url>https://github.com/brunomnsilva/UbiquitousNeuralNetworks</url>
 
     <properties>
         <maven.compiler.source>1.9</maven.compiler.source>
@@ -59,6 +64,17 @@
         <developerConnection>scm:git:ssh://github.com:brunomnsilva/UbiquitousNeuralNetworks.git</developerConnection>
         <url>http://github.com/brunomnsilva/UbiquitousNeuralNetworks/tree/master</url>
     </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->

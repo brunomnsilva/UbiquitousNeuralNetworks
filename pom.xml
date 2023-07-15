@@ -6,7 +6,7 @@
 
     <groupId>com.brunomnsilva</groupId>
     <artifactId>ubiquitousneuralnetworks</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -20,27 +20,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>https://opensource.org/license/mit/</url>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <name>Bruno Silva</name>
-            <email>brunomnsilva@gmail.com</email>
-            <organization>brunomnsilva</organization>
-            <organizationUrl>http://www.brunomnsilva.com</organizationUrl>
-        </developer>
-    </developers>
-
-    <scm>
-        <connection>scm:git:git://github.com/brunomnsilva/UbiquitousNeuralNetworks.git</connection>
-        <developerConnection>scm:git:ssh://github.com:brunomnsilva/UbiquitousNeuralNetworks.git</developerConnection>
-        <url>http://github.com/brunomnsilva/UbiquitousNeuralNetworks/tree/master</url>
-    </scm>
 
     <build>
         <plugins>
