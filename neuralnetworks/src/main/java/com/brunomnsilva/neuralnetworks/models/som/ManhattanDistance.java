@@ -38,11 +38,9 @@ public class ManhattanDistance implements MetricDistance {
     public double distanceBetween(VectorN a, VectorN b) {
         Args.requireEqual(a.dimensions(), "a.dimensions()", b.dimensions(), "b.dimensions()");
 
-        double[] aArr = a.values();
-        double[] bArr = b.values();
         double distance = 0;
         for (int i = 0; i < a.dimensions(); i++) {
-            distance += Math.abs(aArr[i] - bArr[i]);
+            distance += Math.abs(a.get(i) - b.get(i));
         }
         return distance;
     }

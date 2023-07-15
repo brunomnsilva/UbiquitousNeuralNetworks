@@ -38,9 +38,6 @@ public class EuclideanDistance implements MetricDistance {
     public double distanceBetween(VectorN a, VectorN b) {
         Args.requireEqual(a.dimensions(), "a.dimensions()", b.dimensions(), "b.dimensions()");
 
-        // After profiling the code, the following form is much more performant.
-        // Avoids copying arrays, which VectorN.values() does.
-
         int len = a.dimensions();
         double distance = 0;
         for(int i=0; i < len; i++) {
@@ -48,15 +45,5 @@ public class EuclideanDistance implements MetricDistance {
         }
 
         return StrictMath.sqrt( distance ) ;
-
-        /*double[] aArr = a.values();
-        double[] bArr = b.values();
-        double distance = 0;
-        double featureDifference = 0;
-        for(int i=0; i < a.dimensions(); i++) {
-            featureDifference = aArr[i] - bArr[i];
-            distance += ( featureDifference * featureDifference);
-        }
-        return StrictMath.sqrt( distance);*/
     }
 }

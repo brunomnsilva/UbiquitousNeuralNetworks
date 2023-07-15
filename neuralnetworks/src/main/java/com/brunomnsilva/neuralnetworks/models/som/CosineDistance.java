@@ -24,6 +24,7 @@
 
 package com.brunomnsilva.neuralnetworks.models.som;
 
+import com.brunomnsilva.neuralnetworks.core.Args;
 import com.brunomnsilva.neuralnetworks.core.VectorN;
 
 /**
@@ -36,6 +37,9 @@ import com.brunomnsilva.neuralnetworks.core.VectorN;
 public class CosineDistance implements MetricDistance {
     @Override
     public double distanceBetween(VectorN a, VectorN b) {
+        Args.requireEqual(a.dimensions(), "a.dimensions()", b.dimensions(), "b.dimensions()");
+
+
         int len = a.dimensions();
         double distance = 0;
         for(int i=0; i < len; i++) {
