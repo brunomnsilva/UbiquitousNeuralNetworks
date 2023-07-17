@@ -31,7 +31,7 @@
     <parent>
         <groupId>com.brunomnsilva</groupId>
         <artifactId>ubiquitousneuralnetworks</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>neuralnetworks-examples</artifactId>
