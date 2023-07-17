@@ -88,6 +88,24 @@ public class VectorN implements Comparable<VectorN> {
     }
 
     /**
+     * Creates a new vector with the given dimensions, where all elements are set to the specified value.
+     *
+     * @param dimensions the number of dimensions of the new vector
+     * @param val        the value to be replicated in all elements of the vector
+     * @return the new vector with replicated elements
+     */
+    public static VectorN rep(int dimensions, double val) {
+        Args.requireNonNegative(dimensions, "dimensions");
+        Args.requireFinite(val, "val");
+
+        double[] values = new double[dimensions];
+        for (int i = 0; i < dimensions; i++) {
+            values[i] = val;
+        }
+        return fromArray(values);
+    }
+
+    /**
      * Creates a new random vector with the given dimensions, using the default
      * random number generator.
      *
