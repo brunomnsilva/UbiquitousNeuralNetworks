@@ -108,6 +108,12 @@ public class GenericWindow extends JFrame {
         setLocationRelativeTo(null); // Center on screen
     }
 
+    @Override
+    public void setPreferredSize(Dimension preferredSize) {
+        super.setPreferredSize(preferredSize);
+        pack(); // adjust contents to preferred size
+    }
+
     /**
      * Sets the window to exit the application on close and displays a confirmation dialog.
      */
