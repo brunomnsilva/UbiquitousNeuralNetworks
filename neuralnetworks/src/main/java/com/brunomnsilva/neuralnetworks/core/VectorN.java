@@ -287,7 +287,7 @@ public class VectorN implements Comparable<VectorN> {
     public void add(VectorN v) {
         Args.nullNotPermitted(v, "v");
 
-        add(v.values());
+        add(v.vector);
     }
 
     /**
@@ -313,7 +313,7 @@ public class VectorN implements Comparable<VectorN> {
      */
     public void subtract(VectorN v) {
         Args.nullNotPermitted(v, "v");
-        subtract(v.values());
+        subtract(v.vector);
     }
 
     /**
@@ -351,7 +351,7 @@ public class VectorN implements Comparable<VectorN> {
     public void divide(VectorN v) {
         Args.nullNotPermitted(v, "v");
 
-        divide(v.values());
+        divide(v.vector);
     }
 
     /**
@@ -389,7 +389,7 @@ public class VectorN implements Comparable<VectorN> {
     public void multiply(VectorN v) {
         Args.nullNotPermitted(v, "v");
 
-        multiply(v.values());
+        multiply(v.vector);
     }
 
     /**
