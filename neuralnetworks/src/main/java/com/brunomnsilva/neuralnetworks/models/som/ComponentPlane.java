@@ -89,6 +89,14 @@ public class ComponentPlane {
     }
 
     /**
+     * Returns the name of the component plane.
+     * @return the name of the component plane
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * Returns the width of the component plane.
      * @return the width of the component plane
      */
@@ -112,7 +120,7 @@ public class ComponentPlane {
      * @return a one-dimensional array of the component plane values
      */
     public double[] flatten() {
-        int w = getHeight();
+        int w = getWidth();
         int h = getHeight();
         double[] array = new double[w * h];
 
