@@ -462,6 +462,35 @@ public class VectorN implements Comparable<VectorN> {
     }
 
     /**
+     * Computes the mean value of the components of the vector.
+     * @return the mean value of its components
+     */
+    public double mean() {
+        double sum = 0;
+        for(int i=0; i < vector.length; ++i) {
+            sum += vector[i];
+        }
+
+        return sum / vector.length;
+    }
+
+    /**
+     * Computes the standard deviation of the components of the vector.
+     * @return the standard deviation of its components
+     */
+    private double std() {
+        double mean = mean();
+
+        double sumdiffs = 0;
+        for(int i=0; i < vector.length; ++i) {
+            sumdiffs += (vector[i] - mean) * (vector[i] - mean);
+        }
+
+        return Math.sqrt( sumdiffs / vector.length );
+    }
+
+
+    /**
      * Computes the dot product with another vector.
      *
      * @param v the other vector
