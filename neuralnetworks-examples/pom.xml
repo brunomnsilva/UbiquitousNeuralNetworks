@@ -42,6 +42,12 @@
             <artifactId>neuralnetworks</artifactId>
             <version>1.2.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.brunomnsilva</groupId>
+            <artifactId>yacl</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>
