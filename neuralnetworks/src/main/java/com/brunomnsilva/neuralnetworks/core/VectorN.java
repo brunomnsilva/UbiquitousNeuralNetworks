@@ -478,7 +478,7 @@ public class VectorN implements Comparable<VectorN> {
      * Computes the standard deviation of the components of the vector.
      * @return the standard deviation of its components
      */
-    private double std() {
+    public double std() {
         double mean = mean();
 
         double sumdiffs = 0;
