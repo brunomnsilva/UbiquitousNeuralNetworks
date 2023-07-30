@@ -24,9 +24,14 @@
 
 package com.brunomnsilva.neuralnetworks.view.som;
 
+import com.brunomnsilva.neuralnetworks.core.VectorN;
+import com.brunomnsilva.neuralnetworks.models.som.Lattice;
+import com.brunomnsilva.neuralnetworks.models.som.PrototypeNeuron;
 import com.brunomnsilva.neuralnetworks.models.som.SelfOrganizingMap;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * An implementation of the U-Matrix visualization. It is an exploratory cluster analysis visualization.
@@ -57,12 +62,13 @@ import java.util.Arrays;
  */
 public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
 
-    public enum Mode {MEDIAN, MEAN, MIN, MAX};
+    public enum Mode {MEDIAN, MEAN, MIN, MAX}
 
     private Mode mode;
 
     public UMatrixVisualizationPanel(SelfOrganizingMap som, Mode mode) {
-        super(som, "U-Matrix", som.getWidth() * 2 - 1, som.getHeight() * 2 - 1);
+        //super(som, "U-Matrix", som.getWidth() * 2 - 1, som.getHeight() * 2 - 1);
+        super(som, "U-Matrix", som.getWidth(), som.getHeight());
 
         this.mode = mode;
 
@@ -92,130 +98,70 @@ public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
 
     @Override
     protected void updateGridValues(SelfOrganizingMap som, GenericGridPanel grid) {
-        double sqrt_2 = Math.sqrt(2);
+        int w = som.getWidth();
+        int h = som.getHeight();
 
-        int My = som.getHeight();
-        int Mx = som.getWidth();
-        int Ux = 2*Mx-1;
-        int Uy = 2*My-1;
+        // Neighbors depend on the lattice structure
+        Lattice lattice = som.getLattice();
+        List<Double> neighborDistances = new ArrayList<>();
 
-        double[] a;
-        double dz1;
-        double dz2;
+        for (PrototypeNeuron neuron : som) {
+            int x = neuron.getIndexX();
+            int y = neuron.getIndexY();
 
-        // U-Matrix computation. I don't quite remember what's the origin
-        // of this algorithm, but I suspect it's an adaptation on Matlab's
-        // algorithm. TODO: It remains to validate this against different lattices
-        for(int j=1; j<=My; j++) {
-            for(int i=1; i<=Mx; i++) {
-                if(i<Mx) {
-                    // Horizontal
-                    //uMatrix[2*i-1][2*j-2] = map[i-1][j-1].distance(map[i][j-1]);
-                    double v = som.distanceBetweenPrototypes(som.get(i-1, j-1), som.get(i, j-1));
-                    grid.set(v, 2*i-1, 2*j-2);
-                }
-                if(j<My) {
-                    // Vertical
-                    //uMatrix[2*i-2][2*j-1] = map[i-1][j-1].distance(map[i-1][j]);
-                    double v = som.distanceBetweenPrototypes(som.get(i-1, j-1), som.get(i-1, j));
-                    grid.set(v, 2*i-2, 2*j-1);
-                }
-                if(j<My && i<Mx) {
-                    // Diagonals
-                    dz1 = som.distanceBetweenPrototypes(som.get(i-1, j-1), som.get(i, j));
-                    dz2 = som.distanceBetweenPrototypes(som.get(i-1, j), som.get(i, j-1));
-                    //uMatrix[2*i-1][2*j-1] = (dz1+dz2)/(2*sqrt_2);
-                    grid.set((dz1+dz2)/(2*sqrt_2), 2*i-1, 2*j-1);
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    if (dx == 0 && dy == 0) {
+                        continue; // Skip the current prototype (no need to calculate distance to itself)
+                    }
+
+                    int neighborX = x + dx;
+                    int neighborY = y + dy;
+
+                    // Valid lattice coordinates
+                    if(neighborX >= 0 && neighborX < w && neighborY >= 0 && neighborY < h) {
+                        PrototypeNeuron neighbor = som.get(neighborX, neighborY);
+                        // Are effectively neighbors
+                        if(lattice.areNeighbors(neuron, neighbor)) {
+                            VectorN neuronPrototype = neuron.getPrototype();
+                            VectorN neighborPrototype = neighbor.getPrototype();
+
+                            neighborDistances.add( neuronPrototype.distance(neighborPrototype) );
+                        }
+                    }
+
                 }
             }
-        }
 
-        // Values on the units
-        for(int j=1; j<=Uy; j+=2) {
-            for(int i=1; i<=Ux; i+=2) {
-                if(i>1 && j>1 && i<Ux && j<Uy) //middle part of the map
-                    a = new double[]{
-                            grid.get(i-2,j-1),
-                            grid.get(i,j-1),
-                            grid.get(i-2, j-1),
-                            grid.get(i-1, j) };
-                else if(j==1 && i>1 && i<Ux) //upper edge
-                    a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i, j-1),
-                            grid.get(i-1, j) };
-                else if(j==Uy && i>1 && i<Ux) //lower edge
-                    a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i, j-1),
-                            grid.get(i-1, j-2) };
-                else if(i==1 && j>1 && j<Uy)
-                    a = new double[]{
-                            grid.get(i, j-1),
-                            grid.get(i-1, j-2),
-                            grid.get(i-1, j) };
-                else if(i==Ux && j>1 && j<Uy)
-                    a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i-1, j-2),
-                            grid.get(i-1, j) };
-                else if(i==1 && j==1)
-                    a = new double[]{
-                            grid.get(i, j-1),
-                            grid.get(i-1, j) };
-                else if(i==Ux && j==1)
-                    a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i-1, j) };
-                else if(i==1 && j==Uy)
-                    a = new double[]{
-                            grid.get(i, j-1),
-                            grid.get(i-1, j-2) };
-                else if(i==Ux && j==Uy)
-                    a = new double[]{
-                            grid.get(i-2, j-1),
-                            grid.get(i-1, j-2) };
-                else
-                    a = new double[]{0.0};
-
-                //uMatrix[i-1][j-1] = eval(a, 0);
-                double v = eval(a, this.mode);
-                grid.set(v, i-1, j-1);
-            }
+            double neuronValue = computeNeuronValue(neighborDistances, this.mode);
+            neighborDistances.clear();
+            grid.set(neuronValue, x, y);
         }
     }
 
-    private static double eval(double[] v, Mode mode) {
+    private static double computeNeuronValue(List<Double> neighborDistances, Mode mode) {
+        int size = neighborDistances.size();
 
-        int len = v.length;
-        if(len == 1) {
-            //same value for all modes
-            return v[0];
-        }
-        else if(len==2) {
-            if(mode == Mode.MEDIAN || mode == Mode.MEAN) return ( (v[0]+v[1])/2 );
-            if(mode == Mode.MIN)    return ( (v[0] < v[1]) ? v[0] : v[1] );
-            if(mode == Mode.MAX)    return ( (v[0] > v[1]) ? v[0] : v[1] );
-        }
-        else if(len == 3) {
-            if(mode == Mode.MEAN)   return ((v[0]+v[1]+v[2])/3);
-
-            Arrays.sort(v);         //sort ascending
-            if(mode == Mode.MEDIAN) return v[1];
-            if(mode == Mode.MIN)    return v[0];
-            if(mode == Mode.MAX)    return v[2];
-        }
-        else if(len==4) {
-            if(mode == Mode.MEAN)   return ((v[0]+v[1]+v[2]+v[3])/4);
-
-            Arrays.sort(v);         //sort ascending
-            if(mode == Mode.MEDIAN) return ((v[1]+v[2])/2);
-            if(mode == Mode.MIN)    return v[0];
-            if(mode == Mode.MAX)    return v[3];
+        if(mode == Mode.MEAN) {
+            double sum = 0;
+            for (Double dist : neighborDistances) {
+                sum += dist;
+            }
+            return sum / size;
         }
 
-        //not expecting more than 4 elements in vector
-        return 0.0;
+        Collections.sort(neighborDistances);
+
+        if(mode == Mode.MIN) return neighborDistances.get(0);
+        else if(mode == Mode.MAX) return neighborDistances.get( size - 1);
+        else { // MEDIAN
+            if(size % 2 == 0) {
+                return neighborDistances.get( size / 2 );
+            } else {
+                int middle = size / 2;
+                return (neighborDistances.get(middle) + neighborDistances.get(middle + 1)) / 2;
+            }
+        }
     }
 
     @Override
