@@ -67,7 +67,6 @@ public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
     private Mode mode;
 
     public UMatrixVisualizationPanel(SelfOrganizingMap som, Mode mode) {
-        //super(som, "U-Matrix", som.getWidth() * 2 - 1, som.getHeight() * 2 - 1);
         super(som, "U-Matrix", som.getWidth(), som.getHeight());
 
         this.mode = mode;
