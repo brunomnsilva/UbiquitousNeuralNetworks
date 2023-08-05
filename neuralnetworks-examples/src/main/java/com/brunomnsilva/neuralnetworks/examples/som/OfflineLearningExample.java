@@ -53,6 +53,7 @@ public class OfflineLearningExample {
             //Dataset dataset = new Dataset("datasets/wine.data");
             //Dataset dataset = new Dataset("datasets/cactus.data");
             //Dataset dataset = new Dataset("datasets/iris.data");
+
             DatasetNormalization normalization = new MinMaxNormalization(dataset);
             normalization.normalize(dataset);
 
@@ -76,17 +77,18 @@ public class OfflineLearningExample {
 
             // Instantiate an offline training algorithm and train the SOM
             // The parameters should be tuned for each variant/dataset in order to get the best results
-            // The Batch training algorithm does not depend on the alpha (learning rate) parameter.
+            // The number of epochs should be higher for smaller datasets
+            // Note: The Batch training algorithm does not depend on the alpha (learning rate) parameter.
             double iAlpha       = 0.2;
             double fAlpha       = 0.005;
-            double iSigma       = StrictMath.sqrt( som.getWidth()*som.getWidth() + som.getHeight()*som.getHeight());
+            double iSigma       = 2 * StrictMath.sqrt( som.getWidth()*som.getWidth() + som.getHeight()*som.getHeight());
             double fSigma       = 0.1;
-            int orderEpochs     = 10;
-            int fineTuneEpochs  = 100;
+            int orderEpochs     = 5;
+            int fineTuneEpochs  = 50;
 
             // Instantiate a training algorithm (classic or batch)
-            //OfflineLearning learning = new ClassicLearning(iAlpha, fAlpha, iSigma, fSigma, orderEpochs, fineTuneEpochs);
-            OfflineLearning learning = new BatchLearning(iSigma, fSigma, orderEpochs, fineTuneEpochs);
+            OfflineLearning learning = new ClassicLearning(iAlpha, fAlpha, iSigma, fSigma, orderEpochs, fineTuneEpochs);
+            //OfflineLearning learning = new BatchLearning(iSigma, fSigma, orderEpochs, fineTuneEpochs);
 
             learning.train(som, dataset);
 
