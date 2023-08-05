@@ -36,36 +36,36 @@ import com.brunomnsilva.neuralnetworks.dataset.DatasetItem;
  * In Batch learning the contributions from each training input is accumulated
  * for each neuron. Only at the end of each training epoch are the prototypes
  * adjusted.
- *
+ * <br/>
  * The Batch learning algorithm does not use a <i>learning rate</i> parameter.
- *
+ * <br/>
  * The details of the algorithm can be found in my PhD thesis <a href="http://hdl.handle.net/10362/19974">here</a> at pp. 26.
  *
  * @author brunomnsilva
  */
 public class BatchLearning implements OfflineLearning {
 
-    private double iSigma, fSigma;
-    private int orderEpochs, finetuneEpochs;
+    private final double iSigma, fSigma;
+    private final int orderEpochs, convergenceEpochs;
 
     /**
      * Constructor that initializes the parameters of the training algorithm.
      * @param iSigma the initial radius of the neighborhood function
      * @param fSigma the final radius of the neighborhood function
      * @param orderEpochs how many ordering epochs of the training algorithm are performed
-     * @param fineTuneEpochs how many fine-tuning epochs of the training algorithm are performed
+     * @param convergenceEpochs how many convergence epochs of the training algorithm are performed
      */
     public BatchLearning(double iSigma, double fSigma,
-                         int orderEpochs, int fineTuneEpochs) {
+                         int orderEpochs, int convergenceEpochs) {
         Args.requireNonNegative(iSigma, "iSigma");
         Args.requireNonNegative(fSigma, "fSigma");
         Args.requireNonNegative(orderEpochs, "orderEpochs");
-        Args.requireNonNegative(fineTuneEpochs, "fineTuneEpochs");
+        Args.requireNonNegative(convergenceEpochs, "convergenceEpochs");
 
         this.iSigma = iSigma;
         this.fSigma = fSigma;
         this.orderEpochs = orderEpochs;
-        this.finetuneEpochs = fineTuneEpochs;
+        this.convergenceEpochs = convergenceEpochs;
     }
 
     @Override
@@ -79,20 +79,28 @@ public class BatchLearning implements OfflineLearning {
         for(int i=0; i < numerator.length; ++i) {
             for(int j=0; j < numerator[0].length; ++j) {
                 numerator[i][j] = VectorN.zeros(som.getDimensionality());
-                denominator[i][j] = 0; // redundant
+                denominator[i][j] = 0; // redundant, but explicit
             }
         }
 
-        int totalEpochs = orderEpochs + finetuneEpochs;
+        int totalEpochs = orderEpochs + convergenceEpochs;
+
+        ConsoleProgressBar progress = new ConsoleProgressBar(totalEpochs);
+        int epochCount = 1;
 
         /* Epoch training, recycling dataset training samples  */
-        ConsoleProgressBar progress = new ConsoleProgressBar(totalEpochs);
+        for(int e = -orderEpochs + 1; e <= convergenceEpochs; ++e) {
 
-        for(int e = 1; e <= totalEpochs; ++e) {
+            progress.update(epochCount++);
 
-            progress.update(e);
-
-            double sigma = DecayFunction.exponential(iSigma, fSigma, e, orderEpochs);
+            // Ordering phase: Keep learning parameters high
+            // Convergence phase: Decrease learning parameters monotonically
+            double sigma;
+            if(e <= 0) {
+                sigma = iSigma;
+            } else {
+                sigma = DecayFunction.exponential(iSigma, fSigma, e, convergenceEpochs);
+            }
 
             for (DatasetItem item : dataset) { // Epoch begin
                 VectorN input = item.getInput();
@@ -102,7 +110,6 @@ public class BatchLearning implements OfflineLearning {
                 for (PrototypeNeuron neuron : som) {
                     double dist = som.latticeDistanceBetween(bmu, neuron);
                     double neigh = NeighboringFunction.gaussian(dist, sigma);
-                    //double neigh = NeighboringFunction.bubble(dist, sigma);
 
                     // Expecting a finite [0, 1] neighborhood function value.
                     // We discard updates when the function value is < 0.01 - this has a negligible
@@ -122,25 +129,28 @@ public class BatchLearning implements OfflineLearning {
                 }
             } // Epoch end
 
-            // Adjust prototypes from accumulators
-            // and reset the later ones for the next epoch
-            for(int i=0; i < numerator.length; ++i) {
-                for(int j=0; j < numerator[0].length; ++j) {
-                    if(denominator[i][j] > 0) {
-                        VectorN prototype = som.get(i, j).getPrototype();
-                        prototype.fill(0); // Just to avoid new allocation
-                        prototype.add(numerator[i][j]);
-                        prototype.divide(denominator[i][j]);
-                    }
-
-                    // Reset accumulators
-                    numerator[i][j].fill(0);
-                    denominator[i][j] = 0;
-                }
-            }
+            adjustPrototypes(som, numerator, denominator);
 
             som.prototypesUpdated();
         }
     }
 
+    private void adjustPrototypes(SelfOrganizingMap som, VectorN[][] numerator, double[][] denominator) {
+        // Adjust prototypes from accumulators
+        // and reset the later ones for the next epoch
+        for(int i=0; i < numerator.length; ++i) {
+            for(int j=0; j < numerator[0].length; ++j) {
+                if(denominator[i][j] > 0) {
+                    VectorN prototype = som.get(i, j).getPrototype();
+                    prototype.fill(0); // Just to avoid new allocation
+                    prototype.add(numerator[i][j]);
+                    prototype.divide(denominator[i][j]);
+                }
+
+                // Reset accumulators
+                numerator[i][j].fill(0);
+                denominator[i][j] = 0;
+            }
+        }
+    }
 }

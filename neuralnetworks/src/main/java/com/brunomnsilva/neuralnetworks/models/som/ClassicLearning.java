@@ -42,7 +42,7 @@ import com.brunomnsilva.neuralnetworks.dataset.DatasetItem;
  * <i>neighboring_f</i> is the neighboring function that weighs the updates
  * based on the distance of a neuron to the best matching unit found at the
  * current iteration.
- *
+ * <br/>
  * The details of the algorithm can be found in my PhD thesis <a href="http://hdl.handle.net/10362/19974">here</a> at pp. 21.
  *
  * @author brunomnsilva
@@ -50,7 +50,7 @@ import com.brunomnsilva.neuralnetworks.dataset.DatasetItem;
 public class ClassicLearning implements OfflineLearning {
 
     private final double iAlpha, fAlpha, iSigma, fSigma;
-    private final int orderEpochs, fineTuneEpochs;
+    private final int orderEpochs, convergenceEpochs;
 
     /**
      * Constructor that initializes the parameters of the training algorithm.
@@ -59,23 +59,23 @@ public class ClassicLearning implements OfflineLearning {
      * @param iSigma the initial radius of the neighborhood function
      * @param fSigma the final radius of the neighborhood function
      * @param orderEpochs how many ordering epochs of the training algorithm are performed
-     * @param fineTuneEpochs how many fine-tuning epochs of the training algorithm are performed
+     * @param convergenceEpochs how many convergence epochs of the training algorithm are performed
      */
     public ClassicLearning(double iAlpha, double fAlpha, double iSigma, double fSigma,
-                           int orderEpochs, int fineTuneEpochs) {
+                           int orderEpochs, int convergenceEpochs) {
         Args.requireNonNegative(iAlpha, "iAlpha");
         Args.requireNonNegative(fAlpha, "fAlpha");
         Args.requireNonNegative(iSigma, "iSigma");
         Args.requireNonNegative(fSigma, "fSigma");
         Args.requireNonNegative(orderEpochs, "orderEpochs");
-        Args.requireNonNegative(fineTuneEpochs, "fineTuneEpochs");
+        Args.requireNonNegative(convergenceEpochs, "convergenceEpochs");
 
         this.iAlpha = iAlpha;
         this.fAlpha = fAlpha;
         this.iSigma = iSigma;
         this.fSigma = fSigma;
         this.orderEpochs = orderEpochs;
-        this.fineTuneEpochs = fineTuneEpochs;
+        this.convergenceEpochs = convergenceEpochs;
     }
 
     @Override
@@ -84,38 +84,39 @@ public class ClassicLearning implements OfflineLearning {
                 dataset.inputDimensionality(), "dataset.numberInputs()");
 
         int nSamples = dataset.size();
-        int totalEpochs = orderEpochs + fineTuneEpochs;
-        int orderIterations = nSamples * orderEpochs;
-        int totalIterations = totalEpochs * nSamples;
+        int totalEpochs = orderEpochs + convergenceEpochs;
+        int convergenceIterations = nSamples * convergenceEpochs;
+
+        ConsoleProgressBar progress = new ConsoleProgressBar(totalEpochs);
+        int epochCount = 1;
 
         /* Epoch training, recycling dataset training samples  */
-        ConsoleProgressBar progress = new ConsoleProgressBar(totalEpochs);
+        int currentConvergenceIteration = 0;
+        for(int e = -orderEpochs + 1; e <= convergenceEpochs; ++e) {
 
-        int currentIteration = 0;
-        for(int e = 1; e <= totalEpochs; ++e) {
-
-            progress.update(e);
+            progress.update(epochCount++);
 
             for (DatasetItem item : dataset) {
-                double alpha = DecayFunction.exponential(iAlpha, fAlpha, currentIteration, orderIterations);
-                double sigma = DecayFunction.exponential(iSigma, fSigma, currentIteration, orderIterations);
 
-                // Here is where the decay of the learning rate and neighborhood distance are controlled.
-                // If we want a decay across all iterations (instead of order/tuning), we can do, e.g.:
-                //double alpha = DecayFunction.exponential(iAlpha, fAlpha, currentIteration, totalIterations);
-                //double sigma = DecayFunction.linear(iSigma, fSigma, currentIteration, totalIterations);
+                // Ordering phase: Keep learning parameters high
+                // Convergence phase: Decrease learning parameters monotonically
+                double alpha, sigma;
+                if(e <= 0) {
+                    alpha = iAlpha;
+                    sigma = iSigma;
+                } else {
+                    alpha = DecayFunction.exponential(iAlpha, fAlpha, currentConvergenceIteration, convergenceIterations);
+                    sigma = DecayFunction.exponential(iSigma, fSigma, currentConvergenceIteration, convergenceIterations);
+                    currentConvergenceIteration++;
+                }
 
                 VectorN input = item.getInput();
                 PrototypeNeuron bmu = som.bestMatchingUnitFor(input);
 
                 adjustPrototypes(som, bmu, input, alpha, sigma);
-
                 som.prototypesUpdated();
-
-                currentIteration++;
             }
         }
-
     }
 
     private void adjustPrototypes(SelfOrganizingMap som, PrototypeNeuron bmu, VectorN input, double alpha, double sigma) {
