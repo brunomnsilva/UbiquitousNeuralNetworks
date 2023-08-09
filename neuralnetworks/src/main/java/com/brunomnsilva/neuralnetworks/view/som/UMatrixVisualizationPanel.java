@@ -26,6 +26,7 @@ package com.brunomnsilva.neuralnetworks.view.som;
 
 import com.brunomnsilva.neuralnetworks.core.VectorN;
 import com.brunomnsilva.neuralnetworks.models.som.Lattice;
+import com.brunomnsilva.neuralnetworks.models.som.MetricDistance;
 import com.brunomnsilva.neuralnetworks.models.som.PrototypeNeuron;
 import com.brunomnsilva.neuralnetworks.models.som.SelfOrganizingMap;
 
@@ -103,6 +104,8 @@ public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
         // Neighbors depend on the lattice structure
         Lattice lattice = som.getLattice();
         List<Double> neighborDistances = new ArrayList<>();
+        // Use the same metric used to construct the model
+        MetricDistance metricDistance = som.getMetricDistance();
 
         for (PrototypeNeuron neuron : som) {
             int x = neuron.getIndexX();
@@ -125,7 +128,8 @@ public class UMatrixVisualizationPanel extends AbstractVisualizationPanel {
                             VectorN neuronPrototype = neuron.getPrototype();
                             VectorN neighborPrototype = neighbor.getPrototype();
 
-                            neighborDistances.add( neuronPrototype.distance(neighborPrototype) );
+                            double dist = metricDistance.distanceBetween(neuronPrototype, neighborPrototype);
+                            neighborDistances.add( dist );
                         }
                     }
 
