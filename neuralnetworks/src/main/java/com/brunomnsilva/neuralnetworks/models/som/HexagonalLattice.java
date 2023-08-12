@@ -29,5 +29,5 @@ package com.brunomnsilva.neuralnetworks.models.som;
  *
  * @author brunomnsilva
  */
-public interface HexagonalLattice extends Lattice {
+public abstract class HexagonalLattice extends Lattice {
 }

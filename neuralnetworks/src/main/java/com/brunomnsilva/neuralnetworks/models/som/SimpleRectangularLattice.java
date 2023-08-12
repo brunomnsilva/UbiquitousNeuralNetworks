@@ -30,7 +30,7 @@ package com.brunomnsilva.neuralnetworks.models.som;
  *
  * @author brunomnsilva
  */
-public class SimpleRectangularLattice implements RectangularLattice {
+public class SimpleRectangularLattice extends RectangularLattice {
     @Override
     public double distanceBetween(PrototypeNeuron a, PrototypeNeuron b) {
         double deltaX = b.getIndexX() - a.getIndexX();

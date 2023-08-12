@@ -26,10 +26,54 @@ package com.brunomnsilva.neuralnetworks.models.som;
 
 /**
  * A lattice is a set of neurons organized in a spatial arrangement.
+ * <br/>
+ * The {@link SelfOrganizingMap} uses an instance of an implementing class to define
+ * its internal lattice. Also, it "injects" the size of the model by calling {@link Lattice#setSize(int, int)}
+ * in the constructor, so no need to call this method explicitly.
  *
  * @author brunomnsilva
  */
-public interface Lattice {
+public abstract class Lattice {
+
+    private int width = -1;
+    private int height = -1;
+
+    /**
+     * Sets the size of the lattice. This may be needed for some topologies to compute
+     * the required distances and neighbor checking.
+     * @param width the width of the lattice
+     * @param height the height of the lattice
+     */
+    protected void setSize(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    /**
+     * Returns the width of the lattice.
+     * @return the width of the lattice
+     * @throws IllegalStateException if the lattice size was not set
+     */
+    public int getWidth() {
+        if(width < 0) {
+            throw new IllegalStateException("Lattice height was not set.");
+        }
+
+        return width;
+    }
+
+    /**
+     * Returns the height of the lattice.
+     * @return the height of the lattice
+     * @throws IllegalStateException if the lattice size was not set
+     */
+    public int getHeight() {
+        if(height < 0) {
+            throw new IllegalStateException("Lattice width was not set.");
+        }
+
+        return height;
+    }
 
     /**
      * Calculates the distance between two prototype neurons in the lattice.
@@ -38,7 +82,7 @@ public interface Lattice {
      * @param b the second prototype neuron
      * @return the distance between the two neurons
      */
-    double distanceBetween(PrototypeNeuron a, PrototypeNeuron b);
+    public abstract double distanceBetween(PrototypeNeuron a, PrototypeNeuron b);
 
     /**
      * Checks if two prototype neurons are neighbors in the lattice.
@@ -47,5 +91,5 @@ public interface Lattice {
      * @param b the second prototype neuron
      * @return true if the two neurons are neighbors, false otherwise
      */
-    boolean areNeighbors(PrototypeNeuron a, PrototypeNeuron b);
+    public abstract boolean areNeighbors(PrototypeNeuron a, PrototypeNeuron b);
 }

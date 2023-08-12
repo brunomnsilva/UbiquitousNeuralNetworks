@@ -29,5 +29,5 @@ package com.brunomnsilva.neuralnetworks.models.som;
  *
  * @author brunomnsilva
  */
-public interface RectangularLattice extends Lattice {
+public abstract class RectangularLattice extends Lattice {
 }

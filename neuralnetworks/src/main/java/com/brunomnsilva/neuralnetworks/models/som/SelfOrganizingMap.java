@@ -43,7 +43,7 @@ import java.util.Iterator;
  * with the following properties:
  *  - topological ordering of the data prototypes;
  *  - density mapping of the training data underlying distribution.
- *
+ * <br/>
  * More details can be found in my PhD thesis <a href="http://hdl.handle.net/10362/19974">here</a> at pp. 17.
  *
  * @author brunomnsilva
@@ -84,6 +84,9 @@ public abstract class SelfOrganizingMap extends AbstractObservable
         this.dimensionality = dimensionality;
 
         this.lattice = lattice;
+        // 'Inject' lattice size
+        this.lattice.setSize(width, height);
+
         this.metricDistance = metricDistance;
 
         this.prototypesList = new ArrayList<>();
@@ -239,7 +242,7 @@ public abstract class SelfOrganizingMap extends AbstractObservable
     /**
      * Used by a caller to signal that the SOM has changed its state.
      * This will notify all registered observers.
-     *
+     * <br/>
      * No verification is made to check if anything has really changed.
      */
     public void prototypesUpdated() { //TODO: change name of method?

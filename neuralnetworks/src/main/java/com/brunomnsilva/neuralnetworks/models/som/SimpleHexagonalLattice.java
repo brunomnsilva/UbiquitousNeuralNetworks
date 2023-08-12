@@ -35,7 +35,7 @@ package com.brunomnsilva.neuralnetworks.models.som;
  *
  * @author brunomnsilva
  */
-public class SimpleHexagonalLattice implements HexagonalLattice {
+public class SimpleHexagonalLattice extends HexagonalLattice {
 
     @Override
     public double distanceBetween(PrototypeNeuron a, PrototypeNeuron b) {
