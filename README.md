@@ -109,7 +109,13 @@ Some *transient* dependencies are used, namely:
 
 ### Citing
 
-:construction:
+At the moment, you can cite this framework with the following publication:
+
+:book: Marques, N. C., & Silva, B. (2023). Exploratory cluster analysis using self-organizing maps: Algorithms, methodologies, and framework. In L. Moutinho, L. Cavique, & E. Bigné (Eds.), Philosophy of Artificial Intelligence and Its Place in Society (pp. 187-213). IGI Global. https://doi.org/10.4018/978-1-6684-9591-9.ch010
+
+#### Publications
+
+If you use this *framework* in your research, please reach out so I can reference your publications here.
 
 ## Contributing
 
@@ -122,7 +128,7 @@ All derivative work should include this license.
 
 ## Authors
 
-Original author: **Bruno Silva** - [(GitHub page)](https://github.com/brunomnsilva) | [(Personal page)](https://www.brunomnsilva.com/)
+Original author: **Bruno Silva** - [(GitHub page)](https://github.com/brunomnsilva) | [(Personal page)](https://www.brunomnsilva.com/) | [(:portugal: CIÊNCIA VITAE)](https://www.cienciavitae.pt/portal/FB1E-5676-5A51)
 
 ### Contributors
 
