@@ -239,10 +239,7 @@ public class VectorN implements Comparable<VectorN> {
     }
 
     public void fill(double value) {
-        // No Arrays.fill(double[], double) method. Must do it manually
-        for (int i = 0; i < vector.length; i++) {
-            vector[i] = value;
-        }
+        Arrays.fill(vector, value);
     }
 
     /**
@@ -351,11 +348,20 @@ public class VectorN implements Comparable<VectorN> {
     }
 
     /**
-     * Divides every component of the vector by the specified divider.
+     * Divides each component of this vector by the specified scalar value.
+     * <p>
+     * If the specified {@code divider} is {@code 0.0}, all components are set to {@code 0.0}
+     * to avoid division-by-zero errors.
+     * </p>
      *
-     * @param divider the value to divide every component by
+     * @param divider the scalar value by which each component of this vector is divided
      */
     public void divide(double divider) {
+        if(divider == 0.0) {
+            Arrays.fill(vector, 0);
+            return;
+        }
+
         for (int i = 0; i < vector.length; i++) {
             vector[i] /= divider;
         }
@@ -373,18 +379,28 @@ public class VectorN implements Comparable<VectorN> {
     }
 
     /**
-     * Divides this vector component-wise by the given array of dividers.
+     * Divides this vector component-wise by the specified array of dividers.
+     * <p>
+     * Each component {@code vector[i]} is divided by {@code dividers[i]}.
+     * If any divider value is {@code 0.0}, the corresponding component is set to {@code 0.0}
+     * to avoid division-by-zero errors.
+     * </p>
      *
-     * @param dividers the array of dividers to apply to this vector
-     * @throws IllegalArgumentException if the length of the given array does not match
+     * @param dividers the array of scalar dividers to apply to each corresponding component
+     * @throws IllegalArgumentException if the length of the {@code dividers} array does not match
      *         the number of dimensions in this vector
+     * @throws NullPointerException if {@code dividers} is {@code null}
      */
     public void divide(double[] dividers) {
         Args.requireEqual(this.dimensions(), "this.dimensions()",
                 dividers.length, "dividers.length");
 
         for (int i = 0; i < dividers.length; i++) {
-            vector[i] /= dividers[i];
+            if (dividers[i] == 0.0) {
+                vector[i] = 0.0; // avoid division-by-zero
+            } else {
+                vector[i] /= dividers[i];
+            }
         }
     }
 
@@ -456,9 +472,7 @@ public class VectorN implements Comparable<VectorN> {
             copy.vector[i] = StrictMath.sqrt( copy.vector[i] ) ;
         }
 
-        for (int i=0; i < vector.length; ++i) {
-            vector[i] = copy.vector[i];
-        }
+        System.arraycopy(copy.vector, 0, vector, 0, vector.length);
     }
 
     /**
