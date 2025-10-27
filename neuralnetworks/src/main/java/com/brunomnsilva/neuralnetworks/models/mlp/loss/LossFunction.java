@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,31 @@
  * THE SOFTWARE.
  */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-package com.brunomnsilva.neuralnetworks.models.mlp;
+package com.brunomnsilva.neuralnetworks.models.mlp.loss;
 
 /**
- * An implementation of the linear (identity) activation function.
+ * Interface for loss functions.
+ * Allows computing the loss and its derivative with respect to network outputs.
+ *
  * @author brunomnsilva
  */
-public class LinearActivation implements ActivationFunction {
+public interface LossFunction {
 
-    @Override
-    public double compute(double x) {
-        return x;
-    }
+    /**
+     * Computes the loss value for predicted outputs vs target outputs.
+     *
+     * @param predicted the predicted outputs from the network
+     * @param target the target outputs
+     * @return the loss value
+     */
+    double computeLoss(double[] predicted, double[] target);
 
-    @Override
-    public double derivative(double fx) {
-        return 1;
-    }
+    /**
+     * Computes the derivative of the loss with respect to the outputs.
+     *
+     * @param predicted the predicted outputs from the network
+     * @param target the target outputs
+     * @return the derivative vector (used as deltas for backprop)
+     */
+    double[] derivative(double[] predicted, double[] target);
 }

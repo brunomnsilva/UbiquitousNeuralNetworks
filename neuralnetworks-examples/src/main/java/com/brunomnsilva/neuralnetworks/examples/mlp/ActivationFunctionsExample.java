@@ -25,10 +25,10 @@
 package com.brunomnsilva.neuralnetworks.examples.mlp;
 
 import com.brunomnsilva.neuralnetworks.core.TimeSeries;
-import com.brunomnsilva.neuralnetworks.models.mlp.LinearActivation;
-import com.brunomnsilva.neuralnetworks.models.mlp.ReLUActivation;
-import com.brunomnsilva.neuralnetworks.models.mlp.SigmoidActivation;
-import com.brunomnsilva.neuralnetworks.models.mlp.TanhActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.LinearActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.ReLUActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.SigmoidActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.TanhActivation;
 import com.brunomnsilva.neuralnetworks.view.GenericWindow;
 import com.brunomnsilva.neuralnetworks.view.chart.Plot2D;
 

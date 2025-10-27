@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2023-2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,7 +27,7 @@
  * and open the template in the editor.
  */
 
-package com.brunomnsilva.neuralnetworks.models.mlp;
+package com.brunomnsilva.neuralnetworks.models.mlp.activation;
 
 /**
  * An activation function.
@@ -51,4 +51,36 @@ public interface ActivationFunction {
       * @return the derivative value of the function
       */
      double derivative(double fx);
+
+     /**
+      * Optional computation of the activation function for a vector of values.
+      * This is useful for vector-level activations like Softmax.
+      * Default implementation throws UnsupportedOperationException.
+      * @param x the input vector
+      * @return the activated vector
+      */
+     default double[] compute(double[] x) {
+          throw new UnsupportedOperationException("Vector activation not supported for this function");
+     }
+
+     /**
+      * Optional derivative for vector-level activation.
+      * Default implementation throws UnsupportedOperationException.
+      * @param fx the activated vector
+      * @return the derivative vector
+      */
+     default double[] derivative(double[] fx) {
+          throw new UnsupportedOperationException("Vector derivative not supported for this function");
+     }
+
+     /**
+      * Defines if this a vector-level activation function, i.e., the activation output of
+      * a neuron depends on the entire layer output. Usually used only in the output layer,
+      * e.g., the softmax function.
+      *
+      * @return true if it is a vector-level activation function; false, otherwise.
+      */
+     default boolean isVectorActivation() {
+          return false;  // default for per-neuron activations
+     }
 }

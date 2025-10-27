@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2023-2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,23 +27,21 @@
  * and open the template in the editor.
  */
 
-package com.brunomnsilva.neuralnetworks.models.mlp;
-
-import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+package com.brunomnsilva.neuralnetworks.models.mlp.activation;
 
 /**
- * A subtype of Neuron to model an output MLP neuron.
- * @see Neuron
+ * An implementation of the linear (identity) activation function.
  * @author brunomnsilva
  */
-public class OutputNeuron extends Neuron {
+public class LinearActivation implements ActivationFunction {
 
-    public OutputNeuron(ActivationFunction activationFunction) {
-        super(activationFunction, 0);
+    @Override
+    public double compute(double x) {
+        return x;
     }
 
-    public OutputNeuron(ActivationFunction activationFunction, double bias) {
-        super(activationFunction, bias);
+    @Override
+    public double derivative(double fx) {
+        return 1;
     }
-
 }

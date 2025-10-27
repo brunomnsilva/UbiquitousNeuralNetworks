@@ -29,6 +29,8 @@
 
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+
 import java.util.ArrayList;
 
 /**

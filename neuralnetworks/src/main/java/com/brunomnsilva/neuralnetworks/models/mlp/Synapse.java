@@ -115,7 +115,7 @@ public class Synapse {
      * @param adjustment the adjustment value
      */
     public void adjustStrength(double adjustment) {
-        this.strength += adjustment;
+        this.strength -= adjustment; // TODO: +/- ???
     }
 
     /**

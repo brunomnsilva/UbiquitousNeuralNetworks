@@ -33,6 +33,10 @@ import java.util.*;
 import com.brunomnsilva.neuralnetworks.core.*;
 import com.brunomnsilva.neuralnetworks.dataset.DatasetItem;
 import com.brunomnsilva.neuralnetworks.dataset.Dataset;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.SoftmaxActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.loss.LossFunction;
+import com.brunomnsilva.neuralnetworks.models.mlp.loss.MSELossFunction;
 
 /**
  * The backpropagation algorithm.
@@ -59,8 +63,11 @@ public class Backpropagation extends AbstractObservable implements Runnable {
     /** Flag to signal premature end of training **/
     private volatile boolean stopTraining;
 
-    /** Learning mean-squared error for all epochs of training **/
-    private final TimeSeries meanSquaredError;
+    /** The loss function to use during training */
+    private LossFunction lossFunction;
+
+    /** Learning "error" from loss function for all epochs of training **/
+    private final TimeSeries lossFunctionError;
 
     /** The dataset iterator to be used during train **/
     private final Dataset dataset;
@@ -88,6 +95,8 @@ public class Backpropagation extends AbstractObservable implements Runnable {
         private int epochs = 100; //default value
         private boolean biasUpdate = false;
 
+        private Class<? extends LossFunction> lossFunctionClass = MSELossFunction.class;
+
         /**
          * Default constructor with mandatory data
          * @param dataset the dataset to train the network with
@@ -96,6 +105,12 @@ public class Backpropagation extends AbstractObservable implements Runnable {
         public Builder(Dataset dataset, MLPNetwork network) {
             this.dataset = dataset;
             this.network = network;
+        }
+
+        public Builder withLossFunction(Class<? extends LossFunction> function) {
+            Args.nullNotPermitted(function, "function");
+            this.lossFunctionClass = function;
+            return this;
         }
 
         /**
@@ -112,8 +127,8 @@ public class Backpropagation extends AbstractObservable implements Runnable {
          * Sets that the biases are to be updated during training.
          * @return the updated builder
          */
-        public Builder withBiasUpdate() {
-            this.biasUpdate = true;
+        public Builder withBiasUpdate(boolean update) {
+            this.biasUpdate = update;
             return this;
         }
 
@@ -144,12 +159,18 @@ public class Backpropagation extends AbstractObservable implements Runnable {
          * @return a new Backpropagation instance
          */
         public Backpropagation build() {
-            return new Backpropagation(dataset, network, learningRate, minimumError, epochs, biasUpdate);
+            LossFunction func;
+            try {
+                func = lossFunctionClass.getConstructor().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Exception while instantiating loss function: " + e);
+            }
+            return new Backpropagation(dataset, network, learningRate, minimumError, epochs, biasUpdate, func);
         }
     }
 
     private Backpropagation(final Dataset dataset, MLPNetwork network, double learningRate,
-                            double minimumError, int numberEpochs, boolean biasUpdate) {
+                            double minimumError, int numberEpochs, boolean biasUpdate, LossFunction lossFunction) {
         // Check if the dataset matches the network
         Args.requireEqual(network.getInputLayer().size(), "MLP input size",
                 dataset.inputDimensionality(), "Dataset input dimensionality");
@@ -159,12 +180,14 @@ public class Backpropagation extends AbstractObservable implements Runnable {
 
         this.dataset = dataset;
         this.network = network;
-        this.meanSquaredError = new TimeSeries("Backpropagation, Mean Squared Error");
+        this.lossFunctionError = new TimeSeries("Backpropagation, Loss Function Error");
 
         this.learningRate = learningRate;
         this.minimumError = minimumError;
         this.numberEpochs = numberEpochs;
         this.biasUpdate = biasUpdate;
+
+        this.lossFunction = lossFunction;
     }
 
     /**
@@ -193,29 +216,71 @@ public class Backpropagation extends AbstractObservable implements Runnable {
         network.feedInput(input);
         network.process();
 
-        // Squared error
-        double squaredError = 0;
+        // Loss/Error function value
+        double lossError = 0;
 
         // Output layer
-        Neuron[] outputNeuron = network.getOutputLayer().getMembers();
-        for (int k = 0; k < outputNeuron.length; ++k) {
-            Neuron unit = outputNeuron[k];
+        Neuron[] outputNeurons = network.getOutputLayer().getMembers();
+        int outputSize = outputNeurons.length;
 
-            double ok = unit.getOutputValue();
-            double tk = targetOutput.get(k);
+        double[] output;
+        ActivationFunction outputActivation = outputNeurons[0].getActivationFunction();
 
-            double derivative = unit.getActivationFunction().derivative(ok);
-            double delta_k = derivative * (tk - ok);
+        if (outputActivation.isVectorActivation()) {
 
-            unit.setOutputErrorValue(delta_k);
+            double[] logits = new double[outputSize];
+            for (int i = 0; i < outputSize; i++) {
+                logits[i] = outputNeurons[i].getOutputValue();
+            }
+            output = outputActivation.compute(logits);
 
-            if(biasUpdate) {
-                unit.adjustBias( learningRate * delta_k);
+            // Compute deltas using the LossFunction
+            double[] lossDerivative = lossFunction.derivative(output, targetOutput.values());
+            double[] actDerivative = outputActivation.derivative(output);
+            double[] deltas = new double[outputNeurons.length];
+
+            // Assign deltas to output neurons
+            for (int i = 0; i < outputSize; i++) {
+                Neuron unit = outputNeurons[i];
+
+                if(outputActivation instanceof SoftmaxActivation) {
+                    deltas[i] = output[i] - targetOutput.values()[i];
+                } else {
+                    deltas[i] = lossDerivative[i] * actDerivative[i];
+                }
+
+                unit.setOutputErrorValue(deltas[i]);
+
+                if (biasUpdate) {
+                    unit.adjustBias(learningRate * deltas[i]);
+                }
             }
 
-            // Compute loss function - squared error
-            squaredError += (tk - ok) * (tk - ok);
+        } else {
+
+            // Per-neuron activations
+            output = new double[outputSize];
+            for (int i = 0; i < outputSize; i++) {
+                output[i] = outputNeurons[i].getOutputValue();
+            }
+
+            // Compute deltas using the LossFunction
+            double[] deltas = lossFunction.derivative(output, targetOutput.values());
+
+            // Assign deltas to output neurons
+            for (int i = 0; i < outputSize; i++) {
+                Neuron unit = outputNeurons[i];
+
+                unit.setOutputErrorValue(deltas[i] * outputActivation.derivative(output[i]));
+
+                if (biasUpdate) {
+                    unit.adjustBias(learningRate * deltas[i]);
+                }
+            }
         }
+
+        // Compute loss value
+        lossError = lossFunction.computeLoss(output, targetOutput.values());
 
         // Hidden layers
         List<HiddenLayer> hiddenLayers = network.getHiddenLayers();
@@ -255,7 +320,7 @@ public class Backpropagation extends AbstractObservable implements Runnable {
         // Alert observers that the network has changed
         notifyObservers();
 
-        return squaredError;
+        return lossError;
     }
 
 
@@ -275,9 +340,9 @@ public class Backpropagation extends AbstractObservable implements Runnable {
      */
     public void run() {
         stopTraining = false;
-        int currentEpoch = 1;
+        int currentEpoch = 0;
         double epochTrainError = 0;
-        meanSquaredError.clear();
+        lossFunctionError.clear();
 
         // For performance reasons, we get all synapses beforehand
         HashMap<Neuron, Synapse[]> synapses = network.getSynapsesFrom();
@@ -297,11 +362,10 @@ public class Backpropagation extends AbstractObservable implements Runnable {
                 epochTrainError += outputError;
             }
 
-            currentEpoch++;
             epochTrainError /= dataset.size();
 
             // Add epoch error value to time series
-            meanSquaredError.append(currentEpoch, epochTrainError);
+            lossFunctionError.append(currentEpoch, epochTrainError);
 
             notifyObservers();
 
@@ -311,6 +375,8 @@ public class Backpropagation extends AbstractObservable implements Runnable {
                 System.out.printf("\n[Training interrupted because minimumError=%.3f was achieved]\n", minimumError);
                 break;
             }
+
+            currentEpoch++;
         }
 
         stopTraining();
@@ -340,8 +406,8 @@ public class Backpropagation extends AbstractObservable implements Runnable {
      *
      * @see TimeSeries
      */
-    public TimeSeries getTrainMeanSquaredError() {
-        return meanSquaredError;
+    public TimeSeries getLossFunctionError() {
+        return lossFunctionError;
     }
 
 }

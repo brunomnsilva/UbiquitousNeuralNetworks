@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2023-2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,23 +22,26 @@
  * THE SOFTWARE.
  */
 
-package com.brunomnsilva.neuralnetworks.models.mlp;
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package com.brunomnsilva.neuralnetworks.models.mlp.activation;
 
 /**
- * An implementation of the ReLU (rectified linear unit) activation function.
+ * An implementation of the sigmoid activation function.
  * @author brunomnsilva
  */
-public class ReLUActivation implements ActivationFunction {
+public class SigmoidActivation implements ActivationFunction {
 
     @Override
     public double compute(double x) {
-        return Math.max(0.0, x);
+        return 1.0 / (1.0 + Math.exp(-x));
     }
 
     @Override
     public double derivative(double fx) {
-        // The ReLU is not differentiable at zero, but the derivative value at zero
-        // can be arbitrarily chosen to be 0 or 1. Here 0 was chosen.
-        return fx <= 0.0 ? 0.0 : 1.0;
+        return fx * (1 - fx);
     }
 }

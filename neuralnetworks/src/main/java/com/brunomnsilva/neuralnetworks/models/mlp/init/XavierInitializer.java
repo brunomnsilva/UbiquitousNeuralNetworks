@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,29 @@
  * THE SOFTWARE.
  */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package com.brunomnsilva.neuralnetworks.models.mlp.init;
 
-package com.brunomnsilva.neuralnetworks.models.mlp;
-
-import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+import java.util.Random;
 
 /**
- * A subtype of Neuron to model an output MLP neuron.
- * @see Neuron
+ * Implements the Xavier (Glorot) initialization method.
+ * <p>
+ * This initialization is suitable for activation functions such as
+ * sigmoid or tanh. It helps maintain the variance of activations
+ * approximately constant across layers, which improves convergence.
+ * </p>
+ *
+ * <p>
+ * The weight values are sampled uniformly from the range: [-limit, +limit]}, where limit = sqrt(6 / (fanIn + fanOut))}.
+ * </p>
+ *
  * @author brunomnsilva
  */
-public class OutputNeuron extends Neuron {
+public class XavierInitializer implements WeightInitializer {
 
-    public OutputNeuron(ActivationFunction activationFunction) {
-        super(activationFunction, 0);
+    @Override
+    public double initialize(int fanIn, int fanOut, Random rand) {
+        double limit = Math.sqrt(6.0 / (fanIn + fanOut));
+        return (rand.nextDouble() * 2 - 1) * limit; // uniform in [-limit, +limit]
     }
-
-    public OutputNeuron(ActivationFunction activationFunction, double bias) {
-        super(activationFunction, bias);
-    }
-
 }

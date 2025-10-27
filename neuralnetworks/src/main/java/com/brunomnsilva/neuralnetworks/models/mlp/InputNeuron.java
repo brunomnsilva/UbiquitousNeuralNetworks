@@ -29,6 +29,8 @@
 
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.LinearActivation;
+
 /**
  * A subtype of Neuron to model an input MLP neuron.
  * @see Neuron

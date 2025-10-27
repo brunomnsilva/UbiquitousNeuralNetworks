@@ -76,5 +76,10 @@ public class TimeValueTuple implements Comparable<TimeValueTuple> {
     public int compareTo(TimeValueTuple other) {
         return (int)(this.time - other.time);
     }
+
+    @Override
+    public String toString() {
+        return String.format("TimeValueTuple{time=%d, value=%.10f}", time, value);
+    }
 }
 

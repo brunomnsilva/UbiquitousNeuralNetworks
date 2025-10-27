@@ -50,6 +50,8 @@ import java.util.Map;
  */
 public class MLPNetworkLayersPanel extends JPanel {
 
+    private static final int MAX_VISIBLE_NEURONS = 32; // adjust as needed
+
     private static final int PADDING = 50;
     private static final int DIAMETER = 40;
 
@@ -88,118 +90,113 @@ public class MLPNetworkLayersPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // We have to first draw the synapses and then the neurons
-        float diameter = DIAMETER;
         final int padding = PADDING;
-        int numberLayers = network.getHiddenLayerCount() + 2; // + input and output
+        float diameter = DIAMETER;
 
-        int xSpacing = (getWidth() - padding*2) / (numberLayers - 1);
-
-        // Two-pass algorithm:
-        // - 1) Compute neuron's positioning on screen (and store them)
-        // - 2 & 3) Draw synapses and neurons
-        Map<Neuron, NeuronPosition> neuronPositionMap = new HashMap<>();
-
-        // 1)
         List<NeuronLayer> orderedLayers = network.getOrderedLayers();
+        int numberLayers = orderedLayers.size();
+        int xSpacing = (getWidth() - 2 * padding) / (numberLayers - 1);
+        int drawHeight = getHeight() - 2 * padding;
 
-        int drawHeight = getHeight() - padding*2;
         int maxNeuronsInLayer = findMaxNumberNeuronsAcrossLayers(orderedLayers);
 
-        // Adjust diameter if height is not enough for complete layer, using the default value
+        // Adjust diameter for tallest layer
         if (maxNeuronsInLayer * diameter > drawHeight) {
-            diameter = (float)drawHeight / maxNeuronsInLayer;
+            diameter = (float) drawHeight / maxNeuronsInLayer;
         }
 
+        Map<Neuron, NeuronPosition> neuronPositionMap = new HashMap<>();
         int x = padding;
+
+        // --- 1) Compute neuron positions ---
         for (NeuronLayer layer : orderedLayers) {
-
-            int y = padding;
-
             Neuron[] neurons = layer.getMembers();
             int numberNeurons = neurons.length;
 
-            // When a layer has 1 or 2 neurons, the general even spacing does not look pretty. E.g.,
-            // the single layer neuron will be at the top of the screen. Therefore, we treat these two situations
-            // differently. If the layer only has one neuron, it will be positioned at the center; if there are two
-            // there are going to be centered with some spacing. A "general" algorithm could be handy.
-            if(numberNeurons == 1) {
-                y = (drawHeight + padding*2) / 2;
+            float ySpacing;
+            float yStart;
+
+            // Compress layer if it exceeds MAX_VISIBLE_NEURONS
+            if (numberNeurons > MAX_VISIBLE_NEURONS) {
+                ySpacing = drawHeight / (MAX_VISIBLE_NEURONS - 1f);
+                yStart = padding;
+                float scale = (float) MAX_VISIBLE_NEURONS / numberNeurons;
+
+                for (int i = 0; i < numberNeurons; i++) {
+                    float y = yStart + i * ySpacing * scale;
+                    neuronPositionMap.put(neurons[i], new NeuronPosition(neurons[i], x, y));
+                }
+            } else if (numberNeurons == 1) {
+                float y = padding + drawHeight / 2f;
                 neuronPositionMap.put(neurons[0], new NeuronPosition(neurons[0], x, y));
-            } else if(numberNeurons == 2) {
-                y = (drawHeight + padding*2) / 4;
-                neuronPositionMap.put(neurons[0], new NeuronPosition(neurons[0], x, y));
-                y *= 3;
-                neuronPositionMap.put(neurons[1], new NeuronPosition(neurons[1], x, y));
+            } else if (numberNeurons == 2) {
+                float y1 = padding + drawHeight / 4f;
+                float y2 = padding + 3 * drawHeight / 4f;
+                neuronPositionMap.put(neurons[0], new NeuronPosition(neurons[0], x, y1));
+                neuronPositionMap.put(neurons[1], new NeuronPosition(neurons[1], x, y2));
             } else {
-                float ySpacing =  drawHeight / (numberNeurons - 1);
+                ySpacing = drawHeight / (numberNeurons - 1f);
+                ySpacing = Math.max(ySpacing, diameter + 2);
+                float totalLayerHeight = ySpacing * (numberNeurons - 1);
+                yStart = padding + (drawHeight - totalLayerHeight) / 2f;
+
+                float y = yStart;
                 for (Neuron neuron : neurons) {
                     neuronPositionMap.put(neuron, new NeuronPosition(neuron, x, y));
                     y += ySpacing;
                 }
             }
-
             x += xSpacing;
         }
 
-        // 2)
+        // --- 2) Draw synapses ---
         double[] minMaxWeights = findMinMaxWeights();
         colorScalePanel.setScale(minMaxWeights[0], minMaxWeights[1]);
+        HashMap<Neuron, Synapse[]> synapsesFrom = network.getSynapsesFrom();
 
-        HashMap<Neuron, Synapse[]> synapsesFrom = network.getSynapsesFrom(); // "outgoing" synapses
         for (Neuron neuron : neuronPositionMap.keySet()) {
-
             NeuronPosition neuronPosition = neuronPositionMap.get(neuron);
             Synapse[] outSynapses = synapsesFrom.get(neuron);
-
-            if(outSynapses != null) {
+            if (outSynapses != null) {
                 for (Synapse s : outSynapses) {
-                    Neuron sink = (Neuron)s.getSink();
-                    NeuronPosition sinkPosition = neuronPositionMap.get(sink);
-
-                    double strength = s.getStrength();
-                    Color strengthColor = colorScalePanel.valueToColor(strength);
-                    g2.setPaint(strengthColor);
-
-                    g2.drawLine((int)neuronPosition.x, (int)neuronPosition.y, (int)sinkPosition.x, (int)sinkPosition.y);
+                    Neuron sink = (Neuron) s.getSink();
+                    NeuronPosition sinkPos = neuronPositionMap.get(sink);
+                    if (sinkPos != null) {
+                        Color strengthColor = colorScalePanel.valueToColor(s.getStrength());
+                        g2.setPaint(strengthColor);
+                        g2.drawLine((int) neuronPosition.x, (int) neuronPosition.y,
+                                (int) sinkPos.x, (int) sinkPos.y);
+                    }
                 }
             }
         }
 
-        // 3)
+        // --- 3) Draw neurons ---
         g2.setFont(LookAndFeel.fontTextSmall);
         FontMetrics fm = g2.getFontMetrics();
         int biasTextWidth = fm.stringWidth("X.XX");
+
         for (Neuron neuron : neuronPositionMap.keySet()) {
-            NeuronPosition neuronPosition = neuronPositionMap.get(neuron);
-            // Draw neuron
-            Ellipse2D.Float circle = new Ellipse2D.Float(neuronPosition.x - diameter/2, neuronPosition.y - diameter/2,
-                    diameter, diameter);
+            NeuronPosition pos = neuronPositionMap.get(neuron);
+            Ellipse2D.Float circle = new Ellipse2D.Float(
+                    pos.x - diameter / 2, pos.y - diameter / 2, diameter, diameter);
             g2.setPaint(neuronColor);
             g2.fill(circle);
             g2.setPaint(Color.BLACK);
             g2.draw(circle);
 
-            if(showBias && (!(neuron instanceof InputNeuron))) {
+            if (showBias && (!(neuron instanceof InputNeuron))) {
                 g2.setPaint(neuronTextColor);
                 g2.drawString(String.format("%.2f", neuron.getBiasValue()),
-                        neuronPosition.x - biasTextWidth/2,
-                        neuronPosition.y);
+                        pos.x - biasTextWidth / 2, pos.y);
             }
 
-            // Draw input/output arrows
-            int arrowLength = (int)Math.max(diameter, ARROW_LENGTH);
+            int arrowLength = (int) Math.max(diameter, ARROW_LENGTH);
             g2.setPaint(neuronArrowColor);
-            if(neuron instanceof InputNeuron) {
-                drawArrow(g2, (int)(neuronPosition.x - arrowLength),
-                        (int)neuronPosition.y,
-                        (int)(neuronPosition.x - diameter/2),
-                        (int)neuronPosition.y);
-            } else if(neuron instanceof OutputNeuron) {
-                drawArrow(g2, (int)(neuronPosition.x + diameter/2),
-                        (int)neuronPosition.y,
-                        (int)(neuronPosition.x + arrowLength),
-                        (int)neuronPosition.y);
+
+            if (neuron instanceof OutputNeuron) {
+                drawArrow(g2, (int) (pos.x + diameter / 2), (int) pos.y,
+                        (int) (pos.x + arrowLength), (int) pos.y);
             }
         }
     }

@@ -29,6 +29,8 @@
 
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+
 /**
  * A subtype of Neuron for hidden layers.
  *

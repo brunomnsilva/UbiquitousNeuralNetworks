@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,28 @@
  * THE SOFTWARE.
  */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package com.brunomnsilva.neuralnetworks.models.mlp.init;
 
-package com.brunomnsilva.neuralnetworks.models.mlp;
-
-import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+import java.util.Random;
 
 /**
- * A subtype of Neuron to model an output MLP neuron.
- * @see Neuron
+ * Strategy interface for weight initialization in a multilayer perceptron (MLP).
+ * <p>
+ * Implementations of this interface define how to generate the initial weight
+ * values for the connections (synapses) between two layers of neurons.
+ * </p>
+ *
  * @author brunomnsilva
  */
-public class OutputNeuron extends Neuron {
+public interface WeightInitializer {
 
-    public OutputNeuron(ActivationFunction activationFunction) {
-        super(activationFunction, 0);
-    }
-
-    public OutputNeuron(ActivationFunction activationFunction, double bias) {
-        super(activationFunction, bias);
-    }
-
+    /**
+     * Computes an initial weight value given the size of the source and target layers.
+     *
+     * @param fanIn  the number of input connections (neurons in the previous layer)
+     * @param fanOut the number of output connections (neurons in the next layer)
+     * @param rand   the random number generator to use
+     * @return a weight value according to the chosen initialization strategy
+     */
+    double initialize(int fanIn, int fanOut, Random rand);
 }

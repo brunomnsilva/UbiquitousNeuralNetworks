@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,28 +22,33 @@
  * THE SOFTWARE.
  */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package com.brunomnsilva.neuralnetworks.models.mlp.loss;
 
-package com.brunomnsilva.neuralnetworks.models.mlp;
+public class CrossEntropyLoss implements LossFunction {
 
-import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
-
-/**
- * A subtype of Neuron to model an output MLP neuron.
- * @see Neuron
- * @author brunomnsilva
- */
-public class OutputNeuron extends Neuron {
-
-    public OutputNeuron(ActivationFunction activationFunction) {
-        super(activationFunction, 0);
+    @Override
+    public double computeLoss(double[] predicted, double[] target) {
+        double loss = 0;
+        for (int i = 0; i < predicted.length; i++) {
+            loss -= target[i] * Math.log(predicted[i] + 1e-15); // epsilon for stability
+        }
+        return loss;
     }
 
-    public OutputNeuron(ActivationFunction activationFunction, double bias) {
-        super(activationFunction, bias);
+    @Override
+    public double[] derivative(double[] predicted, double[] target) {
+        double[] delta = new double[predicted.length];
+        for (int i = 0; i < predicted.length; i++) {
+            delta[i] = predicted[i] - target[i]; // gradient for Softmax + Cross-Entropy
+        }
+        return delta;
     }
 
+    public static void main(String[] args) {
+        double[] target = {0, 1, 0};
+        double[] probabilities = {0.05, 0.9, 0.05};
+
+        CrossEntropyLoss loss = new CrossEntropyLoss();
+        System.out.println(loss.computeLoss(probabilities, target));
+    }
 }

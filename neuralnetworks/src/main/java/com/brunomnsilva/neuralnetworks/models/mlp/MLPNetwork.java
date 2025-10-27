@@ -30,6 +30,10 @@ package com.brunomnsilva.neuralnetworks.models.mlp;
 
 import com.brunomnsilva.neuralnetworks.core.Args;
 import com.brunomnsilva.neuralnetworks.core.VectorN;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.LinearActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.init.UniformInitializer;
+import com.brunomnsilva.neuralnetworks.models.mlp.init.WeightInitializer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -51,8 +55,7 @@ public class MLPNetwork {
         private LayerInfo inputLayerInfo;
         private LayerInfo outputLayerInfo;
         private final List<LayerInfo> hiddenLayersInfo;
-        private double synapseMinInitialWeight = Synapse.MIN_INIT_STRENGTH;
-        private double synapseMaxInitialWeight = Synapse.MAX_INIT_STRENGTH;
+        private WeightInitializer weightInitializer = new UniformInitializer(Synapse.MIN_INIT_STRENGTH, Synapse.MAX_INIT_STRENGTH);
 
         /**
          * Default constructor that initializes the builder.
@@ -116,18 +119,14 @@ public class MLPNetwork {
         }
 
         /**
-         * Sets interval of values from which the synapses weights are to be initialized.
-         * @param min minimum value
-         * @param max maximum value
+         * Sets the weight initializer.
+         * @param initializer the weight initializer
          * @return the updated builder
          */
-        public Builder weightsInitializedBetween(double min, double max) {
-            Args.requireFinite(min, "min");
-            Args.requireFinite(max, "max");
-            Args.requireGreaterThan(max, "max", min);
+        public Builder withWeightInitializer(WeightInitializer initializer) {
+            Args.nullNotPermitted(initializer, "initializer");
 
-            synapseMinInitialWeight = min;
-            synapseMaxInitialWeight = max;
+            this.weightInitializer = initializer;
 
             return this;
         }
@@ -144,7 +143,7 @@ public class MLPNetwork {
 
             try {
                 return new MLPNetwork(inputLayerInfo, hiddenLayersInfo, outputLayerInfo,
-                        synapseMinInitialWeight, synapseMaxInitialWeight);
+                        weightInitializer);
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
@@ -160,8 +159,7 @@ public class MLPNetwork {
     /** The output layer. Only one exists. **/
     private final OutputLayer outputLayer;
 
-    private MLPNetwork(LayerInfo input, List<LayerInfo> hidden, LayerInfo output, double weightsMin, double weightsMax)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    private MLPNetwork(LayerInfo input, List<LayerInfo> hidden, LayerInfo output, WeightInitializer weightInitializer) {
 
         // Initialize network architecture
         // Input layer
@@ -175,10 +173,17 @@ public class MLPNetwork {
         hiddenLayers = new ArrayList<>();
         for (LayerInfo layerInfo : hidden) {
 
+            ActivationFunction activationFunc;
+            try {
+                activationFunc = layerInfo.neuronActivation.getConstructor().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException("Exception while instantiating activation function: " + e);
+            }
+
             HiddenLayer layer = new HiddenLayer();
             for (int j = 0; j < layerInfo.neuronCount; j++) {
-                ActivationFunction func = layerInfo.neuronActivation.getConstructor().newInstance();
-                HiddenNeuron hiddenNeuron = new HiddenNeuron(func, layerInfo.neuronBias);
+
+                HiddenNeuron hiddenNeuron = new HiddenNeuron(activationFunc, layerInfo.neuronBias);
                 layer.addNeuron(hiddenNeuron);
             }
 
@@ -187,19 +192,26 @@ public class MLPNetwork {
 
         int outputSize = output.neuronCount;
         outputLayer = new OutputLayer();
+
+        ActivationFunction activationFunc;
+        try {
+            activationFunc = output.neuronActivation.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Exception while instantiating activation function: " + e);
+        }
+
         for (int i = 0; i < outputSize; i++) {
-            ActivationFunction func = output.neuronActivation.getConstructor().newInstance();
-            outputLayer.addNeuron(new OutputNeuron(func, output.neuronBias));
+            outputLayer.addNeuron(new OutputNeuron(activationFunc, output.neuronBias));
         }
 
         // Fully connected network
-        connectLayers(weightsMin, weightsMax);
+        connectLayers(weightInitializer);
     }
 
     /**
      * Generates a fully-connected network by creating the necessary synapses between all layers.
      */
-    private void connectLayers(double weightsMin, double weightsMax) {
+    private void connectLayers(WeightInitializer initializer) {
         Random rand = new Random();
 
         List<NeuronLayer> layers = getOrderedLayers();
@@ -208,10 +220,13 @@ public class MLPNetwork {
             Neuron[] sources = layers.get(i).getMembers();
             Neuron[] targets = layers.get(i + 1).getMembers();
 
+            int fanIn = sources.length;
+            int fanOut = targets.length;
+
             for (Neuron source : sources) {
                 for (Neuron target : targets) {
-                    // Create and weigh the synapse with a uniform random value
-                    double weight = (weightsMax - weightsMin) * rand.nextDouble() + weightsMin;
+                    // Create and weigh the synapse using the weight initializer
+                    double weight = initializer.initialize(fanIn, fanOut, rand);
                     Synapse synapse = new Synapse(source, target, weight);
                     target.connectSynapse(synapse);
                 }
@@ -361,7 +376,29 @@ public class MLPNetwork {
     public VectorN recall(VectorN input)  {
         feedInput(input);
         process();
-        return getCurrentOutput();
+        //return getCurrentOutput();
+
+        Neuron[] outputNeurons = getOutputLayer().getMembers();
+        ActivationFunction outputActivation = outputNeurons[0].getActivationFunction();
+
+        VectorN output;
+
+        if (outputActivation.isVectorActivation()) {
+            // Collect logits
+            double[] logits = new double[outputNeurons.length];
+            for (int i = 0; i < outputNeurons.length; i++) {
+                logits[i] = outputNeurons[i].getOutputValue();
+            }
+
+            double[] outputAfterVectorActivation = outputActivation.compute(logits);
+            output = VectorN.fromArray(outputAfterVectorActivation);
+
+        } else {
+            // Per-neuron activation: return raw outputs
+            output = getCurrentOutput();
+        }
+
+        return output;
     }
 
     /**

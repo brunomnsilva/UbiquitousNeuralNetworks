@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,25 @@
  * THE SOFTWARE.
  */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package com.brunomnsilva.neuralnetworks.models.mlp.init;
 
-package com.brunomnsilva.neuralnetworks.models.mlp;
+import java.util.Random;
 
 /**
- * An implementation of the tanh (tangent hyperbolic) activation function.
+ * Implements the He (Kaiming) initialization method.
+ * <p>
+ * This initialization is designed for use with ReLU and related activation
+ * functions. It maintains the variance of activations by sampling weights
+ * from a normal distribution with standard deviation sqrt(2 / fanIn).
+ * </p>
+ *
  * @author brunomnsilva
  */
-public class TanhActivation implements ActivationFunction {
-
-    public double compute(double x) {
-        return Math.tanh(x);
-    }
+public class HeInitializer implements WeightInitializer {
 
     @Override
-    public double derivative(double fx) {
-        return 1 - (fx*fx); // 1 - f(x)^2
+    public double initialize(int fanIn, int fanOut, Random rand) {
+        return rand.nextGaussian() * Math.sqrt(2.0 / fanIn);
     }
-
 }
+

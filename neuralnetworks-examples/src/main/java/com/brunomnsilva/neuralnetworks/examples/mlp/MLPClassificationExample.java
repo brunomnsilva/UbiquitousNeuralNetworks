@@ -32,6 +32,10 @@ package com.brunomnsilva.neuralnetworks.examples.mlp;
 import com.brunomnsilva.neuralnetworks.core.VectorN;
 import com.brunomnsilva.neuralnetworks.dataset.*;
 import com.brunomnsilva.neuralnetworks.models.mlp.*;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.SigmoidActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.SoftmaxActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.init.UniformInitializer;
+import com.brunomnsilva.neuralnetworks.models.mlp.loss.CrossEntropyLoss;
 import com.brunomnsilva.neuralnetworks.view.chart.Plot2D;
 import com.brunomnsilva.neuralnetworks.view.GenericWindow;
 import com.brunomnsilva.neuralnetworks.view.mlp.MLPNetworkVisualizationPanel;
@@ -62,9 +66,9 @@ public class MLPClassificationExample {
             // due to the random initialization of weights and dataset split
             MLPNetwork network = new MLPNetwork.Builder()
                     .addInputLayer(dataset.inputDimensionality())
-                    .addHiddenLayer(10, ReLUActivation.class, 0)
-                    .addOutputLayer(dataset.outputDimensionality(), SigmoidActivation.class, 0) // Our target outputs are in [0,1]
-                    .weightsInitializedBetween(-0.3, 0.3)
+                    .addHiddenLayer(100, SigmoidActivation.class, 0)
+                    .addOutputLayer(dataset.outputDimensionality(), SoftmaxActivation.class, 0) // Our target outputs are in [0,1]
+                    .withWeightInitializer(new UniformInitializer(-0.1, 0.1))
                     .build();
 
             System.out.println( network );
@@ -77,10 +81,11 @@ public class MLPClassificationExample {
 
             // Train the model
             Backpropagation backpropagation = new Backpropagation.Builder(trainingSet, network)
-                    .withLearningRate(0.03)
-                    .withBiasUpdate()
+                    .withLearningRate(0.001)
+                    .withBiasUpdate(true)
                     .forNumberEpochs(2000)
                     .untilMinimumError(0.01)
+                    .withLossFunction(CrossEntropyLoss.class)
                     .build();
             backpropagation.addObserver(networkViz);
 
@@ -109,10 +114,11 @@ public class MLPClassificationExample {
             VectorN target = item.getTargetOutput();
 
             // Test recall accuracy with argmax
-            if( target.compareTo(VectorN.argmax(networkOut)) == 0) {
+            VectorN argmax = VectorN.argmax(networkOut);
+            if( target.compareTo(argmax) == 0) {
                 accurate++;
             } else {
-                System.out.printf("[FAILED] Desired vs. Network output: %s vs. %s \n", target, networkOut);
+                System.out.printf("[FAILED] Desired vs. Network output: %s vs. %s \n", target, networkOut /*argmax*/);
             }
         }
         // Compute dataset accuracy (%)
@@ -121,13 +127,13 @@ public class MLPClassificationExample {
 
     private static void viewTrainError(Backpropagation bp) {
 
-        Plot2D plot = new Plot2D.Builder().title("Training error")
-                .linePlotFromTimeSeries(bp.getTrainMeanSquaredError())
+        Plot2D plot = new Plot2D.Builder().title("Loss Function Error")
+                .linePlotFromTimeSeries(bp.getLossFunctionError())
                 .xLabel("Epoch")
-                .yLabel("MSE")
+                .yLabel("Loss Function")
                 .build();
 
-        GenericWindow t = GenericWindow.horizontalLayout("Error Over Time", plot);
+        GenericWindow t = GenericWindow.horizontalLayout("Loss Function Over Time", plot);
         t.setVisible(true);
     }
 

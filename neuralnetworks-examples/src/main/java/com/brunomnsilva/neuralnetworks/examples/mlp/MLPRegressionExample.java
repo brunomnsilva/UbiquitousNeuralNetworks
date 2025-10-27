@@ -31,6 +31,14 @@ package com.brunomnsilva.neuralnetworks.examples.mlp;
 
 import com.brunomnsilva.neuralnetworks.dataset.*;
 import com.brunomnsilva.neuralnetworks.models.mlp.*;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.LinearActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.ReLUActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.SigmoidActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.TanhActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.init.HeInitializer;
+import com.brunomnsilva.neuralnetworks.models.mlp.init.UniformInitializer;
+import com.brunomnsilva.neuralnetworks.models.mlp.init.XavierInitializer;
+import com.brunomnsilva.neuralnetworks.models.mlp.loss.MSELossFunction;
 import com.brunomnsilva.neuralnetworks.view.GenericWindow;
 import com.brunomnsilva.neuralnetworks.view.chart.Plot2D;
 import com.brunomnsilva.neuralnetworks.view.mlp.MLPNetworkVisualizationPanel;
@@ -55,7 +63,10 @@ public class MLPRegressionExample {
             DatasetNormalization normalization = new MinMaxNormalization(dataset);
             normalization.normalize(dataset);
 
-            DatasetTrainTestSplit datasetSplit = DatasetTrainTestSplit.split(dataset, 0.75);
+            DatasetSummary summary = new DatasetSummary(dataset);
+            System.out.println(summary);
+
+            DatasetTrainTestSplit datasetSplit = DatasetTrainTestSplit.split(dataset, 0.8);
             Dataset trainingSet = datasetSplit.getTrainingSet();
             Dataset testSet = datasetSplit.getTestSet();
 
@@ -63,9 +74,10 @@ public class MLPRegressionExample {
             // due to the random initialization of weights and dataset split
             MLPNetwork network = new MLPNetwork.Builder()
                     .addInputLayer(dataset.inputDimensionality())
-                    .addHiddenLayer(12, ReLUActivation.class, 0)
+                    .addHiddenLayer(10, SigmoidActivation.class, 0)
                     .addOutputLayer(dataset.outputDimensionality(), LinearActivation.class, 0) // Linear activation for regression
-                    .weightsInitializedBetween(-0.3, 0.3)
+                    .withWeightInitializer(new UniformInitializer(-0.1, 0.1))
+                    //.withWeightInitializer(new HeInitializer())
                     .build();
 
             System.out.println( network );
@@ -78,9 +90,10 @@ public class MLPRegressionExample {
 
             // Train the model
             Backpropagation backpropagation = new Backpropagation.Builder(trainingSet, network)
-                    .withLearningRate(0.03)
-                    .withBiasUpdate()
+                    .withLearningRate(0.001)
+                    .withBiasUpdate(true)
                     .forNumberEpochs(2000)
+                    .withLossFunction(MSELossFunction.class)
                     .build();
             backpropagation.addObserver(networkViz);
 
@@ -131,6 +144,8 @@ public class MLPRegressionExample {
             totalSumOfSquares += deviation * deviation;
         }
 
+        if (totalSumOfSquares == 0) return 1.0; // perfect prediction
+
         // calculate R-squared score
         double rSquared = 1.0 - (sumOfSquares / totalSumOfSquares);
         return rSquared;
@@ -139,7 +154,7 @@ public class MLPRegressionExample {
     private static void viewTrainError(Backpropagation bp) {
 
         Plot2D plot = new Plot2D.Builder().title("Training error")
-                .linePlotFromTimeSeries(bp.getTrainMeanSquaredError())
+                .linePlotFromTimeSeries(bp.getLossFunctionError())
                 .xLabel("Epoch")
                 .yLabel("MSE")
                 .build();

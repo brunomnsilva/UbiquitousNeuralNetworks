@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Ubiquitous Neural Networks | Copyright 2023  brunomnsilva@gmail.com
+ * Ubiquitous Neural Networks | Copyright 2025  brunomnsilva@gmail.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +22,26 @@
  * THE SOFTWARE.
  */
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package com.brunomnsilva.neuralnetworks.models.mlp.loss;
 
-package com.brunomnsilva.neuralnetworks.models.mlp;
-
-/**
- * An implementation of the sigmoid activation function.
- * @author brunomnsilva
- */
-public class SigmoidActivation implements ActivationFunction {
+public class MSELossFunction implements LossFunction {
 
     @Override
-    public double compute(double x) {
-        return ( 1 / (1 + Math.pow(Math.E, -x)) );
+    public double computeLoss(double[] predicted, double[] target) {
+        double sum = 0;
+        for (int i = 0; i < predicted.length; i++) {
+            double diff = target[i] - predicted[i];
+            sum += diff * diff;
+        }
+        return sum / predicted.length;
     }
 
     @Override
-    public double derivative(double fx) {
-        return fx * (1 - fx);
+    public double[] derivative(double[] predicted, double[] target) {
+        double[] delta = new double[predicted.length];
+        for (int i = 0; i < predicted.length; i++) {
+            delta[i] = 2.0 * (predicted[i] - target[i]) / predicted.length; // derivative w.r.t output
+        }
+        return delta;
     }
 }
