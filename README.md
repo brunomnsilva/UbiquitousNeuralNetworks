@@ -66,7 +66,10 @@ Contains different types of visualizations for all available models and a simple
 
 ![](assets/mlp-visualizations-example.png)
 
-- Network architecture, weights and bias
+- Arbitrary number of layers, activation functions and loss functions.
+- Backpropagation algorithm;
+- Save/Load models;
+- Visualization of the network (weights - colored) and bias (via context menu).
 
 ## Documentation
 
@@ -95,6 +98,7 @@ Some *transient* dependencies are used, namely:
 - [jfreechart](https://mvnrepository.com/artifact/org.jfree/jfreechart)
 - [jfreesvg](https://mvnrepository.com/artifact/org.jfree/jfreesvg)
 - [JMathPlot](https://mvnrepository.com/artifact/com.github.yannrichet/JMathPlot)
+- [Jackson Core](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core)
 
 ### API Reference
 
