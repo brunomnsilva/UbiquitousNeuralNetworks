@@ -61,7 +61,7 @@ public class MLPNetworkLayersPanel extends JPanel {
     private final ColorScalePanel colorScalePanel;
     private final MLPNetwork network;
 
-    private boolean showBias = false;
+    private boolean showBias = false; // Can be changed during runtime with context menu
 
     /**
      * Creates a new MLPNetworkLayersPanel.
@@ -175,6 +175,7 @@ public class MLPNetworkLayersPanel extends JPanel {
         g2.setFont(LookAndFeel.fontTextSmall);
         FontMetrics fm = g2.getFontMetrics();
         int biasTextWidth = fm.stringWidth("X.XX");
+        int textHeight = fm.getAscent();
 
         for (Neuron neuron : neuronPositionMap.keySet()) {
             NeuronPosition pos = neuronPositionMap.get(neuron);
@@ -186,9 +187,22 @@ public class MLPNetworkLayersPanel extends JPanel {
             g2.draw(circle);
 
             if (showBias && (!(neuron instanceof InputNeuron))) {
+                // Draw background rectangle for text
+                int rectPadding = 2;
+                int rectX = (int)(pos.x - biasTextWidth - rectPadding);
+                int rectY = (int)(pos.y - textHeight);
+                int rectWidth = biasTextWidth + rectPadding * 2;
+                int rectHeight = textHeight + rectPadding;
+
+                g2.setPaint(new Color(255, 255, 255, 200)); // Semi-transparent white
+                g2.fillRect(rectX, rectY, rectWidth, rectHeight);
+                g2.setPaint(Color.BLACK);
+                g2.drawRect(rectX, rectY, rectWidth, rectHeight);
+
+                // Draw text on top
                 g2.setPaint(neuronTextColor);
                 g2.drawString(String.format("%.2f", neuron.getBiasValue()),
-                        pos.x - biasTextWidth / 2, pos.y);
+                        pos.x - biasTextWidth, pos.y);
             }
 
             int arrowLength = (int) Math.max(diameter, ARROW_LENGTH);
