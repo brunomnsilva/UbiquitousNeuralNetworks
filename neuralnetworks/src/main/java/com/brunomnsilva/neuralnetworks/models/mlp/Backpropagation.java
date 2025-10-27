@@ -55,7 +55,7 @@ public class Backpropagation extends AbstractObservable implements Runnable {
     private final double learningRate;
 
     /** Whether to update the neuron's bias during training */
-    private final boolean biasUpdate;
+    private final boolean updateBias;
 
     /* Momentum to escape local minima */
     //private double momentum; // TODO: explore idea?
@@ -90,10 +90,10 @@ public class Backpropagation extends AbstractObservable implements Runnable {
         // Default values here
         private final MLPNetwork network;
         private final Dataset dataset;
-        private double learningRate = 0.1; //default value
+        private double learningRate = 0.001; //default value
         private double minimumError = 0; //default value
         private int epochs = 100; //default value
-        private boolean biasUpdate = false;
+        private boolean biasUpdate = true;
 
         private Class<? extends LossFunction> lossFunctionClass = MSELossFunction.class;
 
@@ -170,7 +170,7 @@ public class Backpropagation extends AbstractObservable implements Runnable {
     }
 
     private Backpropagation(final Dataset dataset, MLPNetwork network, double learningRate,
-                            double minimumError, int numberEpochs, boolean biasUpdate, LossFunction lossFunction) {
+                            double minimumError, int numberEpochs, boolean updateBias, LossFunction lossFunction) {
         // Check if the dataset matches the network
         Args.requireEqual(network.getInputLayer().size(), "MLP input size",
                 dataset.inputDimensionality(), "Dataset input dimensionality");
@@ -185,7 +185,7 @@ public class Backpropagation extends AbstractObservable implements Runnable {
         this.learningRate = learningRate;
         this.minimumError = minimumError;
         this.numberEpochs = numberEpochs;
-        this.biasUpdate = biasUpdate;
+        this.updateBias = updateBias;
 
         this.lossFunction = lossFunction;
     }
@@ -251,7 +251,7 @@ public class Backpropagation extends AbstractObservable implements Runnable {
 
                 unit.setOutputErrorValue(deltas[i]);
 
-                if (biasUpdate) {
+                if (updateBias) {
                     unit.adjustBias(learningRate * deltas[i]);
                 }
             }
@@ -271,10 +271,13 @@ public class Backpropagation extends AbstractObservable implements Runnable {
             for (int i = 0; i < outputSize; i++) {
                 Neuron unit = outputNeurons[i];
 
-                unit.setOutputErrorValue(deltas[i] * outputActivation.derivative(output[i]));
+                double activationDerivative = outputActivation.derivative(output[i]);
+                double neuronDelta = deltas[i] * activationDerivative;
 
-                if (biasUpdate) {
-                    unit.adjustBias(learningRate * deltas[i]);
+                unit.setOutputErrorValue(neuronDelta * activationDerivative);
+
+                if (updateBias) {
+                    unit.adjustBias(learningRate * neuronDelta);
                 }
             }
         }
@@ -303,7 +306,7 @@ public class Backpropagation extends AbstractObservable implements Runnable {
 
                 unit.setOutputErrorValue(delta_h);
 
-                if(biasUpdate) {
+                if(updateBias) {
                     unit.adjustBias( learningRate * delta_h);
                 }
             }

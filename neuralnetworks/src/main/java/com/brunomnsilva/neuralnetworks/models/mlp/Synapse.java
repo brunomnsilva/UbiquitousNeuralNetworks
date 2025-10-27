@@ -80,7 +80,7 @@ public class Synapse {
      * weighed by the <code>strength</code> of the synapse.
      * @see Neuron#getOutputValue()
      * @see #getStrength()
-     * @return the the conducted value of the synapse
+     * @return the conducted value of the synapse
      */
     public double getConductedValue() {
         return getSource().getOutputValue() * strength;
@@ -110,7 +110,7 @@ public class Synapse {
      * @param adjustment the adjustment value
      */
     public void adjustStrength(double adjustment) {
-        this.strength -= adjustment; // TODO: +/- ???
+        this.strength -= adjustment;
     }
 
     /**

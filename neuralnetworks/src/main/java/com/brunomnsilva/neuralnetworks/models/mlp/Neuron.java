@@ -43,15 +43,8 @@ import java.util.ArrayList;
  * @author brunomnsilva
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.CLASS,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "@class"
-)
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.IntSequenceGenerator.class,
-        property = "id"
-)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "id")
 public abstract class Neuron {
 
     /** The activation function of the neuron **/
@@ -59,7 +52,6 @@ public abstract class Neuron {
 
     /** The bias of the neuron **/
     private double biasValue;
-
 
     /** The input value **/
     @JsonIgnore
@@ -129,7 +121,7 @@ public abstract class Neuron {
      * @param adjustment the adjustment value
      */
     public void adjustBias(double adjustment) {
-        biasValue += adjustment;
+        biasValue -= adjustment;
     }
 
     /**
