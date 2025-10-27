@@ -32,13 +32,16 @@ package com.brunomnsilva.neuralnetworks.examples.mlp;
 import com.brunomnsilva.neuralnetworks.core.VectorN;
 import com.brunomnsilva.neuralnetworks.dataset.*;
 import com.brunomnsilva.neuralnetworks.models.mlp.*;
-import com.brunomnsilva.neuralnetworks.models.mlp.activation.SigmoidActivation;
-import com.brunomnsilva.neuralnetworks.models.mlp.activation.SoftmaxActivation;
+import com.brunomnsilva.neuralnetworks.models.mlp.activation.*;
+import com.brunomnsilva.neuralnetworks.models.mlp.init.HeInitializer;
 import com.brunomnsilva.neuralnetworks.models.mlp.init.UniformInitializer;
+import com.brunomnsilva.neuralnetworks.models.mlp.init.XavierInitializer;
 import com.brunomnsilva.neuralnetworks.models.mlp.loss.CrossEntropyLoss;
 import com.brunomnsilva.neuralnetworks.view.chart.Plot2D;
 import com.brunomnsilva.neuralnetworks.view.GenericWindow;
 import com.brunomnsilva.neuralnetworks.view.mlp.MLPNetworkVisualizationPanel;
+
+import java.util.List;
 
 /**
  *
@@ -64,11 +67,17 @@ public class MLPClassificationExample {
 
             // Create network architecture -- it is problem dependent and results may vary
             // due to the random initialization of weights and dataset split
-            MLPNetwork network = new MLPNetwork.Builder()
+            /*MLPNetwork network = new MLPNetwork.Builder()
                     .addInputLayer(dataset.inputDimensionality())
                     .addHiddenLayer(100, SigmoidActivation.class, 0)
                     .addOutputLayer(dataset.outputDimensionality(), SoftmaxActivation.class, 0) // Our target outputs are in [0,1]
                     .withWeightInitializer(new UniformInitializer(-0.1, 0.1))
+                    .build();*/
+            MLPNetwork network = new MLPNetwork.Builder()
+                    .addInputLayer(dataset.inputDimensionality())
+                    .addHiddenLayer(30, TanhActivation.class, 0.1)
+                    .addOutputLayer(dataset.outputDimensionality(), SoftmaxActivation.class, 0) // Our target outputs are in [0,1]
+                    .withWeightInitializer(new XavierInitializer())
                     .build();
 
             System.out.println( network );
@@ -84,7 +93,7 @@ public class MLPClassificationExample {
                     .withLearningRate(0.001)
                     .withBiasUpdate(true)
                     .forNumberEpochs(2000)
-                    .untilMinimumError(0.01)
+                    .untilMinimumError(0.001)
                     .withLossFunction(CrossEntropyLoss.class)
                     .build();
             backpropagation.addObserver(networkViz);

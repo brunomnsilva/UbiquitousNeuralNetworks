@@ -74,10 +74,11 @@ public class MLPRegressionExample {
             // due to the random initialization of weights and dataset split
             MLPNetwork network = new MLPNetwork.Builder()
                     .addInputLayer(dataset.inputDimensionality())
-                    .addHiddenLayer(10, SigmoidActivation.class, 0)
+                    .addHiddenLayer(50, TanhActivation.class, 0.1)
+                    .addHiddenLayer(20, ReLUActivation.class, 0.1)
+                    .addHiddenLayer(7, ReLUActivation.class, 0.1)
                     .addOutputLayer(dataset.outputDimensionality(), LinearActivation.class, 0) // Linear activation for regression
-                    .withWeightInitializer(new UniformInitializer(-0.1, 0.1))
-                    //.withWeightInitializer(new HeInitializer())
+                    .withWeightInitializer(new HeInitializer())
                     .build();
 
             System.out.println( network );
@@ -92,7 +93,7 @@ public class MLPRegressionExample {
             Backpropagation backpropagation = new Backpropagation.Builder(trainingSet, network)
                     .withLearningRate(0.001)
                     .withBiasUpdate(true)
-                    .forNumberEpochs(2000)
+                    .forNumberEpochs(1000)
                     .withLossFunction(MSELossFunction.class)
                     .build();
             backpropagation.addObserver(networkViz);
