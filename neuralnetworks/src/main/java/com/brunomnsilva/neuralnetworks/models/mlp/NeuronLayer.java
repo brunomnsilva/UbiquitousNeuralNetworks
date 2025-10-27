@@ -29,6 +29,8 @@
 
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import java.util.ArrayList;
 
 /**
@@ -36,6 +38,7 @@ import java.util.ArrayList;
  *
  * @author brunomnsilva
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public abstract class NeuronLayer {
 
     private final ArrayList<Neuron> members;

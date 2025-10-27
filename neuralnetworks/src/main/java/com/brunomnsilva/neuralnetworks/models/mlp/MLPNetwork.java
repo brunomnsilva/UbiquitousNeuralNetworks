@@ -34,8 +34,15 @@ import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
 import com.brunomnsilva.neuralnetworks.models.mlp.activation.LinearActivation;
 import com.brunomnsilva.neuralnetworks.models.mlp.init.UniformInitializer;
 import com.brunomnsilva.neuralnetworks.models.mlp.init.WeightInitializer;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 /**
@@ -43,6 +50,7 @@ import java.util.*;
  *
  * @author brunomnsilva
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class MLPNetwork {
 
     /**
@@ -206,6 +214,13 @@ public class MLPNetwork {
 
         // Fully connected network
         connectLayers(weightInitializer);
+    }
+
+    private MLPNetwork() {
+        /* Used only for deserialization */
+        this.inputLayer = null;
+        this.hiddenLayers = null;
+        this.outputLayer = null;
     }
 
     /**
@@ -445,5 +460,35 @@ public class MLPNetwork {
             this.neuronBias = neuronBias;
         }
 
+    }
+
+    // JSON (DE)SERIALIZATION
+
+    public static void saveJSON(MLPNetwork network, String filepath) {
+        ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+        try {
+            String json = mapper.writeValueAsString(network);
+            Path filePath = Paths.get(filepath);
+
+            Files.write(filePath, json.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static MLPNetwork loadJSON(String filepath) {
+        ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+
+        try {
+            Path filePath = Paths.get(filepath);
+
+            String json = new String(Files.readAllBytes(filePath));
+            MLPNetwork mlpNetwork = mapper.readValue(json, MLPNetwork.class);
+
+            return mlpNetwork;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

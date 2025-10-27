@@ -29,6 +29,9 @@
 
 package com.brunomnsilva.neuralnetworks.models.mlp.activation;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 /**
  * An activation function.
  * <br/>
@@ -36,6 +39,12 @@ package com.brunomnsilva.neuralnetworks.models.mlp.activation;
  *
  * @author brunomnsilva
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.CLASS,   // store the full class name
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "@class"
+)
 public interface ActivationFunction {
 
      /**

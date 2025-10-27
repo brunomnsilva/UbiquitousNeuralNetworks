@@ -100,6 +100,17 @@ public class MLPClassificationExample {
             double accuracy = testNetwork(network, testSet);
             System.out.println(String.format("-- Network Accuracy: %.2f %%", accuracy) );
 
+            /*
+            // Test save/load model
+
+            MLPNetwork.saveJSON(network, "model.json");
+
+            MLPNetwork loadedNetwork = MLPNetwork.loadJSON("model.json");
+            System.out.println("Testing stored network with test dataset ...");
+            accuracy = testNetwork(loadedNetwork, testSet);
+            System.out.println(String.format("-- Network Accuracy: %.2f %%", accuracy) );
+            */
+
         } catch (Exception e) {
             e.printStackTrace();
         }

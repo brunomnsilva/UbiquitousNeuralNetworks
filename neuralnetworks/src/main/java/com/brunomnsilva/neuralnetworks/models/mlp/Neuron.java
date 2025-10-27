@@ -30,6 +30,7 @@
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
 import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+import com.fasterxml.jackson.annotation.*;
 
 import java.util.ArrayList;
 
@@ -41,6 +42,16 @@ import java.util.ArrayList;
  *
  * @author brunomnsilva
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.CLASS,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "@class"
+)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.IntSequenceGenerator.class,
+        property = "id"
+)
 public abstract class Neuron {
 
     /** The activation function of the neuron **/
@@ -51,19 +62,25 @@ public abstract class Neuron {
 
 
     /** The input value **/
+    @JsonIgnore
     private double inputValue;
     /** The output value **/
+    @JsonIgnore
     private double outputValue;
     /** The last output error value **/
+    @JsonIgnore
     private double outputErrorValue;
 
     /** The dendrite (or soma) - connected synapses (inputs) to this neuron **/
-    protected ArrayList<Synapse> soma = new ArrayList<>();
+    protected final ArrayList<Synapse> soma;
+
 
     public Neuron(ActivationFunction activationFunction, double biasValue) {
         this.activationFunction = activationFunction;
         this.biasValue = biasValue;
+        soma = new ArrayList<>();
     }
+
 
     /**
      * Connects a synapse to this neuron. This is a signal-receiving synapse.

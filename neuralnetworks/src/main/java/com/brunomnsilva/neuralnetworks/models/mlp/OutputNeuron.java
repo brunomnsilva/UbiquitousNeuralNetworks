@@ -30,6 +30,8 @@
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
 import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A subtype of Neuron to model an output MLP neuron.
@@ -42,7 +44,9 @@ public class OutputNeuron extends Neuron {
         super(activationFunction, 0);
     }
 
-    public OutputNeuron(ActivationFunction activationFunction, double bias) {
+    @JsonCreator
+    public OutputNeuron(@JsonProperty("activationFunction")ActivationFunction activationFunction,
+                        @JsonProperty("biasValue") double bias) {
         super(activationFunction, bias);
     }
 

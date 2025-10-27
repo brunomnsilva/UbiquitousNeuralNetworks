@@ -29,7 +29,7 @@
 
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
-import java.util.Random;
+import com.fasterxml.jackson.annotation.*;
 
 /**
  * Models a synapse in a MLP network.
@@ -41,12 +41,15 @@ import java.util.Random;
  *
  * @author brunomnsilva
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.IntSequenceGenerator.class,
+        property = "id"
+)
 public class Synapse {
 
     public static final double MIN_INIT_STRENGTH = -0.3; //-1.05;
     public static final double MAX_INIT_STRENGTH = 0.3; //1.05;
-
-    private static final Random rand = new Random();
 
     /** The source of the synapse **/
     private Neuron source;
@@ -57,26 +60,18 @@ public class Synapse {
     /** The strength of the synapse **/
     private double strength;
 
-
-    /**
-     * Creates a synapse that connects two neurons with a random weight.
-     * @param source the source of the synapse
-     * @param sink the sink of the synapse
-     */
-    public Synapse(Neuron source, Neuron sink) {
-        this.source = source;
-        this.sink = sink;
-        strength = (MAX_INIT_STRENGTH - MIN_INIT_STRENGTH) * rand.nextDouble() + MIN_INIT_STRENGTH;
-    }
-
     /**
      * Creates a synapse that connects two neurons with a random weight.
      * @param source the source of the synapse
      * @param sink the sink of the synapse
      * @param strength the initial strength of the synapse
      */
-    public Synapse(Neuron source, Neuron sink, double strength) {
-        this(source, sink);
+    @JsonCreator
+    public Synapse(@JsonProperty("source") Neuron source,
+                   @JsonProperty("sink") Neuron sink,
+                   @JsonProperty("strength") double strength) {
+        this.source = source;
+        this.sink = sink;
         this.strength = strength;
     }
 
@@ -85,7 +80,7 @@ public class Synapse {
      * weighed by the <code>strength</code> of the synapse.
      * @see Neuron#getOutputValue()
      * @see #getStrength()
-     * @return
+     * @return the the conducted value of the synapse
      */
     public double getConductedValue() {
         return getSource().getOutputValue() * strength;

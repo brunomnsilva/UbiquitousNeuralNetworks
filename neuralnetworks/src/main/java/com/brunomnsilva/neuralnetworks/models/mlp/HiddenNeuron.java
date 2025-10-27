@@ -30,6 +30,8 @@
 package com.brunomnsilva.neuralnetworks.models.mlp;
 
 import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * A subtype of Neuron for hidden layers.
@@ -38,7 +40,9 @@ import com.brunomnsilva.neuralnetworks.models.mlp.activation.ActivationFunction;
  */
 public class HiddenNeuron extends Neuron {
 
-    public HiddenNeuron(ActivationFunction activationFunction, double biasValue) {
+    @JsonCreator
+    public HiddenNeuron(@JsonProperty("activationFunction") ActivationFunction activationFunction,
+                        @JsonProperty("biasValue") double biasValue) {
         super(activationFunction, biasValue);
     }
 
