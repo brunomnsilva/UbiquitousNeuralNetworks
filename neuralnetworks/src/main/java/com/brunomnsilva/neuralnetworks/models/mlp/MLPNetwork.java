@@ -481,7 +481,7 @@ public class MLPNetwork {
         ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
         try {
-            Path filePath = Paths.get(filepath);
+            Path filePath = Path.of(filepath);
 
             String json = new String(Files.readAllBytes(filePath));
             MLPNetwork mlpNetwork = mapper.readValue(json, MLPNetwork.class);
