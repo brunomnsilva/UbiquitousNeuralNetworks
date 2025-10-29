@@ -26,6 +26,7 @@ package com.brunomnsilva.neuralnetworks.core;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 /**
  * Utility class for reading and writing CSV files.
@@ -56,6 +57,38 @@ public final class CSVUtils {
         StringBuilder sb = new StringBuilder();
         for(int i=0; i < values.length; ++i) {
             sb.append(values[i]);
+            if(i != values.length - 1) {
+                sb.append(separator);
+            }
+        }
+        sb.append("\n");
+        fw.write(sb.toString());
+    }
+
+    /**
+     * Appends a sequence of <i>double</i> values to a CSV file, using custom format and the default (comma) value separator.
+     * @param fw the file to write
+     * @param df the formatter of the double values
+     * @param values the sequence of values
+     * @throws IOException if the file cannot be written to
+     */
+    public static void appendValuesToFile(FileWriter fw, DecimalFormat df, double ...values) throws IOException {
+        // By default values are comma-separated
+        appendValuesToFile(fw, df, ',', values);
+    }
+
+    /**
+     * Appends a sequence of <i>double</i> values to a CSV file, using custom format and the specified value separator.
+     * @param fw the file to write
+     * @param df the formatter of the double values
+     * @param separator the value separator to use
+     * @param values the sequence of values
+     * @throws IOException if the file cannot be written to
+     */
+    public static void appendValuesToFile(FileWriter fw, DecimalFormat df, char separator, double ...values) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i < values.length; ++i) {
+            sb.append( df.format( values[i]) );
             if(i != values.length - 1) {
                 sb.append(separator);
             }
