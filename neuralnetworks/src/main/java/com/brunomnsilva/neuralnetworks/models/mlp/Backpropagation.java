@@ -103,7 +103,7 @@ public class Backpropagation extends AbstractObservable implements Runnable {
          * @param network the network to be trained
          */
         public Builder(Dataset dataset, MLPNetwork network) {
-            this.dataset = dataset;
+            this.dataset = dataset.copy(); // Create a copy so that it is shuffled internally
             this.network = network;
         }
 
@@ -358,6 +358,7 @@ public class Backpropagation extends AbstractObservable implements Runnable {
 
             epochTrainError = 0;
 
+            dataset.shuffle(); // Shuffle before each training epoch
             for (DatasetItem item : dataset) {
 
                 double outputError = trainSample(item.getInput(), item.getTargetOutput(), synapses);
