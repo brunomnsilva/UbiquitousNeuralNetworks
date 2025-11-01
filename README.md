@@ -31,8 +31,10 @@ This project implements three types of **neural network models and variants**:
 - **`StreamART2A`** (*a contribution from my thesis*): a neural network architecture, based on Adaptive Resonance Theory, that uses a process of competitive learning and resonance to summarize input patterns in streaming data.
 
 - **`MLPNetwork` (Multilayer Perceptron)**: a feedforward neural network architecture consisting of multiple layers of nodes that can approximate any function with enough hidden units. Useful for classification and regression.
+  - Arbitrary number of layers, activation functions (Linear, ReLU, Sigmoid and Tanh) and loss functions (Softmax and MSE).
+  - Backpropagation algorithm;
+  - Save/Load models;
 
-  > You can create deep learning models and comes with several activation functions, e.g., linear, ReLU, sigmoid and tanh.
 
 ### Data and preprocessing
 
@@ -66,10 +68,7 @@ Contains different types of visualizations for all available models and a simple
 
 ![](assets/mlp-visualizations-example.png)
 
-- Arbitrary number of layers, activation functions and loss functions.
-- Backpropagation algorithm;
-- Save/Load models;
-- Visualization of the network (weights - colored) and bias (via context menu).
+- Visualization of the network structure and weights (with color scale) and bias (via context menu, then depicts bias values near each neuron).
 
 ## Documentation
 
@@ -132,7 +131,7 @@ All derivative work should include this license.
 
 ## Authors
 
-Original author: **Bruno Silva** - [(GitHub page)](https://github.com/brunomnsilva) | [(Personal page)](https://www.brunomnsilva.com/) | [(:portugal: CIÊNCIA VITAE)](https://www.cienciavitae.pt/portal/FB1E-5676-5A51)
+Original author: **Bruno Silva** - [(GitHub page)](https://github.com/brunomnsilva) | [(Personal page)](https://www.brunomnsilva.com/) | [(🇵🇹 CIÊNCIA VITAE)](https://www.cienciavitae.pt/portal/FB1E-5676-5A51)
 
 ### Contributors
 
